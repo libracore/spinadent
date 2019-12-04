@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include spinadent *.css
+recursive-include spinadent *.csv
+recursive-include spinadent *.html
+recursive-include spinadent *.ico
+recursive-include spinadent *.js
+recursive-include spinadent *.json
+recursive-include spinadent *.md
+recursive-include spinadent *.png
+recursive-include spinadent *.py
+recursive-include spinadent *.svg
+recursive-include spinadent *.txt
+recursive-exclude spinadent *.pyc
