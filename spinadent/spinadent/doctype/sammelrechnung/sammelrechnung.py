@@ -12,60 +12,18 @@ class Sammelrechnung(Document):
         
     def before_save(self):
         # run this before saving
-        self.collect_values()
+        self.collect_values() 
  
     def collect_values(self):               
-        # get all unpaid sales_invoices
-        sql_query = """SELECT `tabSales Invoice`.`name` AS `name`,
-        `tabSales Invoice`.`docstatus` AS `doc_status`,
-        FROM `tabSales Invoice`
+        sql_query = """SELECT `tabSales Invoice` AS `sinv`,
+            FROM `tabSales Invoice`
             WHERE 
-              `tabSales Invoice`.`docstatus` = 1;"""
+                `tabSales Invoice`.`docstatus` = 1;
+        """
         results = frappe.db.sql(sql_query, as_dict=True)
-
+        
         self.invoices = []
         for result in results:
             row = self.append('invoices', {
-                'name': result['name'], 
-                'docstatus': result['doc_status']
-            })               
-               
-        return       
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-               
-    #def collect_values(self):
-        # get all unpaid sales_invoices
-        #sql_query = """SELECT `tabDelivery Note` AS `dlvrnt`,
-           #WHERE 
-              #`tabSales Invoice`.`docstatus` = 1
-              #AND `tabSales Invoice`.`status` = "To Bill" 
-              #AND `tabSales Invoice`.`abgeholt` = 0;"""
-        #results = frappe.db.sql(sql_query, as_dict=True)
-#
-        #self.invoices = []
-        #for result in results:
-            #row = self.append('invoices', {
-                #'sales_invoice': result['dlvrnt'], 
-            #})
-        #
-        #return
-        
-        
+                'sales_invoice': result['sinv'], 
+            })
