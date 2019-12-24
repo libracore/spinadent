@@ -5,10 +5,11 @@
  "engine": "InnoDB",
  "field_order": [
   "date",
-  "invoices",
-  "delivery_note",
-  "customer",
-  "customer_name"
+  "section_delivery_notes",
+  "delivery_notes",
+  "section_sales_invoices",
+  "sales_invoices",
+  "amended_from"
  ],
  "fields": [
   {
@@ -17,30 +18,39 @@
    "label": "Date"
   },
   {
-   "fieldname": "invoices",
+   "fieldname": "section_delivery_notes",
+   "fieldtype": "Section Break",
+   "label": "Delivery Notes"
+  },
+  {
+   "fieldname": "delivery_notes",
    "fieldtype": "Table",
-   "label": "Invoices",
-   "options": "Sammelrechnung Invoices"
+   "label": "Delivery Notes",
+   "options": "Sammelrechnung Lieferschein"
   },
   {
-   "fieldname": "delivery_note",
+   "fieldname": "section_sales_invoices",
+   "fieldtype": "Section Break",
+   "label": "Sales Invoices"
+  },
+  {
+   "fieldname": "sales_invoices",
+   "fieldtype": "Table",
+   "label": "Sales Invoices",
+   "options": "Sammelrechnung Rechnung"
+  },
+  {
+   "fieldname": "amended_from",
    "fieldtype": "Link",
-   "label": "Delivery Note",
-   "options": "Delivery Note"
-  },
-  {
-   "fieldname": "customer",
-   "fieldtype": "Link",
-   "label": "Customer",
-   "options": "Customer"
-  },
-  {
-   "fieldname": "customer_name",
-   "fieldtype": "Data",
-   "label": "Customer Name"
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Sammelrechnung",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
- "modified": "2019-12-08 18:51:04.550758",
+ "is_submittable": 1,
+ "modified": "2019-12-24 09:29:07.970462",
  "modified_by": "Administrator",
  "module": "Spinadent",
  "name": "Sammelrechnung",
@@ -59,8 +69,8 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "date",
  "track_changes": 1
 }
