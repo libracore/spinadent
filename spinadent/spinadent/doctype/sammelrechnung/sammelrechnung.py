@@ -76,7 +76,7 @@ class Sammelrechnung(Document):
                         new_sinv.sammelrechnung = self.name
                         customer_name = dn.customer_name
                     for item in dn.items:
-                        new_sinv.items.append({
+                        new_sinv.append('items', {
                             'item_code': item.item_code,
                             'rate': item.rate,
                             'qty': item.qty,
@@ -86,6 +86,8 @@ class Sammelrechnung(Document):
                     dn.sammelrechnung = self.name
                     dn.save()
             sinv_ref = new_sinv.insert()
+            if self.auto_submit:
+                sinv_ref.submit()
             frappe.db.commit();
             # add sales invoice reference to collected invoice
             row = self.append('sales_invoices', {
@@ -93,6 +95,7 @@ class Sammelrechnung(Document):
                 'customer': customer,
                 'customer_name': customer_name,
             })
+        self.save()
         return
         
     def unlink_docs(self):

@@ -6,6 +6,7 @@
  "field_order": [
   "date",
   "column_main",
+  "auto_submit",
   "amended_from",
   "section_delivery_notes",
   "delivery_notes",
@@ -35,6 +36,7 @@
    "label": "Sales Invoices"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "sales_invoices",
    "fieldtype": "Table",
    "label": "Sales Invoices",
@@ -53,10 +55,16 @@
   {
    "fieldname": "column_main",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_submit",
+   "fieldtype": "Check",
+   "label": "Auto Submit"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-12-24 10:11:34.660818",
+ "modified": "2019-12-24 10:44:35.681714",
  "modified_by": "Administrator",
  "module": "Spinadent",
  "name": "Sammelrechnung",
