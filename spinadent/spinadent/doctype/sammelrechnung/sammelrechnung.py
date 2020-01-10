@@ -12,7 +12,8 @@ class Sammelrechnung(Document):
         
     def before_save(self):
         # run this before saving
-        self.collect_values() 
+        if not self.delivery_notes:
+            self.collect_values() 
         return
         
     def on_submit(self):
