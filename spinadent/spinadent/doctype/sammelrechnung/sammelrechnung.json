@@ -6,6 +6,7 @@
  "field_order": [
   "date",
   "column_main",
+  "company",
   "auto_submit",
   "amended_from",
   "section_delivery_notes",
@@ -61,10 +62,16 @@
    "fieldname": "auto_submit",
    "fieldtype": "Check",
    "label": "Auto Submit"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-12-24 10:44:35.681714",
+ "modified": "2020-01-14 21:19:04.014818",
  "modified_by": "Administrator",
  "module": "Spinadent",
  "name": "Sammelrechnung",

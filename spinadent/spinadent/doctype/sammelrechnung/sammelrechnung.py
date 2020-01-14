@@ -75,6 +75,7 @@ class Sammelrechnung(Document):
                         new_sinv.selling_price_list = dn.selling_price_list
                         new_sinv.items = []
                         new_sinv.sammelrechnung = self.name
+                        new_sinv.company = self.company
                         customer_name = dn.customer_name
                     for item in dn.items:
                         new_sinv.append('items', {
