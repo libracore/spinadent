@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+import datetime
 
 class Sammelrechnung(Document):
     def validate(self):
@@ -60,9 +61,16 @@ class Sammelrechnung(Document):
                 'doctype': 'Sales Invoice'
             })
             customer_name = ""
+            first = datetime.date(2100,1,1)
+            last = datetime.date(2000,1,1)
             for delivery_note in self.delivery_notes:
                 if delivery_note.customer == customer:
                     dn = frappe.get_doc("Delivery Note", delivery_note.delivery_note)
+                    # find first and last delivery note date
+                    if dn.posting_date < first:
+                        first = dn.posting_date
+                    if dn.posting_date > last:
+                        last = dn.posting_date
                     if not new_sinv.customer:
                         # populate sales invoice details from first delivery note
                         new_sinv.customer = dn.customer
@@ -88,6 +96,7 @@ class Sammelrechnung(Document):
                     # store reference to collected invoice
                     dn.sammelrechnung = self.name
                     dn.save()
+            sinv.title = "Sammelrechnung vom {0} bis {1}".format(firstfirst.strftime("%d.%m.%Y"), lastfirst.strftime("%d.%m.%Y"))
             sinv_ref = new_sinv.insert()
             if self.auto_submit:
                 sinv_ref.submit()
