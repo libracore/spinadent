@@ -96,7 +96,7 @@ class Sammelrechnung(Document):
                     # store reference to collected invoice
                     dn.sammelrechnung = self.name
                     dn.save()
-            sinv.title = "Sammelrechnung vom {0} bis {1}".format(firstfirst.strftime("%d.%m.%Y"), lastfirst.strftime("%d.%m.%Y"))
+            sinv.title = "Sammelrechnung vom {0} bis {1}".format(first.strftime("%d.%m.%Y"), last.strftime("%d.%m.%Y"))
             sinv_ref = new_sinv.insert()
             if self.auto_submit:
                 sinv_ref.submit()
