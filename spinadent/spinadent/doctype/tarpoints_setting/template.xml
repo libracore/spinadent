@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<invoice:tarPoint>
+
+<!--Biller/Rechnungssteller -->
+    <invoice:biller>
+        <invoice:company>
+            <invoice:companyname>Dentallabor Sumex AG</invoice:companyname>
+                <invoice:postal>
+                    <invoice:street>Waldweg 12</invoice:street>
+                    <invoice:zip>5002</invoice:zip>
+                    <invoice:city>Aarau</invoice:city>
+                </invoice:postal>
+                <invoice:telecom>
+                    <invoice:phone>052 888 7766</invoice:phone>
+                    <invoice:fax>052 888 6677</invoice:fax>
+                </invoice:telecom>
+        </invoice:company>
+    </invoice:biller>
+
+
+<!--Debitor/Rechnungserhalter-->
+    <invoice:debitor>
+        <invoice:person>
+            <invoice:familyname>Esfrei</invoice:familyname>
+            <invoice:givenname>Kari</invoice:givenname>
+            <invoice:postal>
+                <invoice:street>Am Aareufer 3</invoice:street>
+                <invoice:country>Schweiz</invoice:country>
+                <invoice:zip>3002</invoice:zip>
+                <invoice:city>Bern</invoice:city>
+            </invoice:postal>
+        </invoice:person>
+    </invoice:debitor>
+
+<!--Provider/Leistungserbringer -->
+    <invoice:provider>
+        <invoice:company>
+            <invoice:companyname>Dentallabor Sumex AG</invoice:companyname>
+            <invoice:postal>
+                <invoice:street>Waldweg 12</invoice:street>
+                <invoice:country>Schweiz</invoice:country>
+                <invoice:zip>5002</invoice:zip>
+                <invoice:city>Aarau</invoice:city>
+            </invoice:postal>
+            <invoice:telecom>
+                <invoice:phone>052 888 7766</invoice:phone>
+                <invoice:fax>052 888 6677</invoice:fax>
+            </invoice:telecom>
+        </invoice:company>
+    </invoice:provider>
+
+<!--Insurance/Versicherung -->
+    <invoice:insurance>
+        <invoice:person>
+            <invoice:familyname>Esfrei</invoice:familyname>
+            <invoice:givenname>Kari</invoice:givenname>
+            <invoice:postal>
+                <invoice:street>Am Aareufer 3</invoice:street>
+                <invoice:country>Schweiz</invoice:country>
+                <invoice:zip>3002</invoice:zip>
+                <invoice:city>Bern</invoice:city>
+            </invoice:postal>
+        </invoice:person>
+    </invoice:insurance>
+
+
+<!--Patient/Patient -->
+    <invoice:patient>
+        <birthday></birthday>
+        <gender></gender>
+        <invoice:person>
+            <invoice:salutation>Herr</invoice:salutation>
+            <invoice:familyname>Muster</invoice:familyname>
+            <invoice:givenname>Peter</invoice:givenname>
+            <invoice:postal>
+                <invoice:street>Musterstrasse 5</invoice:street>
+                <invoice:country>Schweiz</invoice:country>
+                <invoice:zip>7304</invoice:zip>
+                <invoice:city>Maienfeld</invoice:city>
+            </invoice:postal>
+        </invoice:person>
+    </invoice:patient>
+
+
+<!--Guarantor/Garant -->
+    <invoice:guarantor>
+        <invoice:person salutation="Herr">
+            <invoice:familyname>Muster</invoice:familyname>
+            <invoice:givenname>Peter</invoice:givenname>
+            <invoice:postal>
+                <invoice:street>Musterstrasse 5</invoice:street>
+                <invoice:country>Schweiz</invoice:country>
+                <invoice:zip>7304</invoice:zip>
+                <invoice:city>Maienfeld</invoice:city>
+            </invoice:postal>
+        </invoice:person>
+    </invoice:guarantor>
+
+
+<!--Balance/Betrag -->
+    <invoice:balance>
+        <currency></currency>
+        <amount></amount>
+        <amount_obligations></amount_obligations>
+        <amount_due></amount_due>
+
+        <invoice:vat>
+            <vat></vat>
+            <vat_number></vat_number>
+            <invoice:vat_rate>
+                <vat></vat>
+                <vat_rate></vat_rate>
+                <amount></amount>
+            </invoice:vat_rate>    
+        </invoice:vat>
+
+    </invoice:balance>
+
+
+
+<!--Bank/Bank -->
+        <invoice:bank>
+            <invoice:company>
+                <invoice:companyname>Bank AG</invoice:companyname>
+                <invoice:postal>
+                    <invoice:zip>4002</invoice:zip>
+                    <invoice:city>Basel</invoice:city>
+                </invoice:postal>
+            </invoice:company>
+        </invoice:bank>
+
+<!--Kreditor/Rechngssteller -->
+        <invoice:creditor>
+            <invoice:company>
+                <invoice:companyname>Dentallabor Sumex AG</invoice:companyname>
+                <invoice:postal>
+                    <invoice:street>Waldweg 12</invoice:street>
+                    <invoice:zip>5002</invoice:zip>
+                    <invoice:city>Aarau</invoice:city>
+                </invoice:postal>
+            </invoice:company>
+        </invoice:creditor>
+
+ <!--UVG/ -->
+    <invoice:uvg></invoice:uvg>
+
+<!--Treatment/Beehandlung -->
+    <invoice:treatment>
+        <date_begin></date_begin>
+        <date_end></date_end>
+        <reason></reason>
+        <invoice:diagnosis type="freetext">Art der Arbeit 11 ZiO-Krone</invoice:diagnosis>
+    </invoice:treatment>
+
+<!--Services/Leistungen -->
+    <invoice:services>
+        <invoice:service>
+
+            <record_id></record_id>
+            <tariff_type></tariff_type>
+            <code></code> 
+            <session></session> 
+            <quantity></quantity>
+            <date_begin></date_begin>
+            <provider_id></provider_id>
+            <responsible_id></responsible_id>
+            <unit></unit>
+            <unit_factor></unit_factor>
+            <amount></amount> 
+            <vat_rate></vat_rate>
+            <service_attributes></service_attributes> 
+            <obligation></obligation>
+            <name></name>
+            <TPW></TPW>
+
+        </invoice:service> 
+    </invoice:services>
+
+</invoice:tarPoint>
