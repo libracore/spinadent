@@ -7,14 +7,12 @@ from __future__ import unicode_literals
 from frappe.model.document import Document
 
 class TarPointsSetting(Document):
-	pass
-
     # prepare transfer file
     def render_transfer_file(self):
-            data = {
-                'transactions': self.get_individual_transactions(restrict_currencies)
-            }            
+        data = {
+            'transactions': self.get_individual_transactions(restrict_currencies)
+        }            
             
-    # change path to template
+        # change path to template
         content = frappe.render_template('erpnextswiss/erpnextswiss/doctype/tarpoints_setting/transfer_file.html', data)
         return {'content': content}
