@@ -91,7 +91,8 @@ class Sammelrechnung(Document):
                             'rate': item.rate,
                             'qty': item.qty,
                             'delivery_note': dn.name,
-                            'dn_detail': item.name
+                            'dn_detail': item.name,
+                            'uom': item.uom
                         })
                     # store reference to collected invoice
                     dn.sammelrechnung = self.name
