@@ -41,11 +41,12 @@ class Sammelrechnung(Document):
         
         self.delivery_notes = []
         for delivery_note in delivery_notes:
-            row = self.append('delivery_notes', {
-                'delivery_note': delivery_note['name'], 
-                'customer': delivery_note['customer'],
-                'customer_name': delivery_note['customer_name'],
-            })
+            if not self.restrict_to_customer or delivery_note['customer'] == self.restrict_to_customer:
+                row = self.append('delivery_notes', {
+                    'delivery_note': delivery_note['name'], 
+                    'customer': delivery_note['customer'],
+                    'customer_name': delivery_note['customer_name'],
+                })
         return
 
     def create_sales_invoices(self):
@@ -125,4 +126,9 @@ class Sammelrechnung(Document):
             elif sinv.docstatus == 0:
                 sinv.docstatus = 2
                 sinv.save()
+        return
+    
+    def clear_delivery_notes(self):
+        self.delivery_notes = []
+        self.save()
         return

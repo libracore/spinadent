@@ -5,6 +5,7 @@
  "engine": "InnoDB",
  "field_order": [
   "date",
+  "restrict_to_customer",
   "column_main",
   "company",
   "auto_submit",
@@ -68,10 +69,16 @@
    "fieldtype": "Link",
    "label": "Company",
    "options": "Company"
+  },
+  {
+   "fieldname": "restrict_to_customer",
+   "fieldtype": "Link",
+   "label": "Restrict to customer",
+   "options": "Customer"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-01-14 21:19:04.014818",
+ "modified": "2020-02-01 20:47:46.086188",
  "modified_by": "Administrator",
  "module": "Spinadent",
  "name": "Sammelrechnung",
