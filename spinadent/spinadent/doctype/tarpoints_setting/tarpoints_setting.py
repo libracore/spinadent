@@ -20,7 +20,8 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             doc=frappe.get_doc('Sales Invoice', sinv) 
         elif dn:
             doc=frappe.get_doc('Delivery Note', dn) 
-            
+        else:
+            frappe.throw("Provide an argument")
         data = {}
         data['xml_version'] = frappe.get_value("ERPNextSwiss Settings", "ERPNextSwiss Settings", "xml_version")
         data['xml_region'] = frappe.get_value("ERPNextSwiss Settings", "ERPNextSwiss Settings", "banking_region")
@@ -30,48 +31,78 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
       
         #rechnungssteller
         company = frappe.get_doc('Company', doc.company)
-        company_address = get_primary_address(doc.company, target_type="Company")
-        data['biller'] = {
-        # zu doppelpunkt ändern
-            'company_name' : company.name,
-            'street' : cgi.escape(company_address.address_line1),
-            'zip' : cgi.escape(company_address.pincode),
-            'city' : cgi.escape(company_address.city),
-            #data['biller']['phone'] = 
-        }
-
-        customer = frappe.get_doc('Customer', doc.customer)
-        customer_address = get_primary_address(target_name=doc.customer, target_type="Customer")
-		#rechnungserhalter
-        data['customer'] = {
-            'family_name' : customer.customer_name,
-            'given_name' : customer.customer_name,
-            'street' : cgi.escape(customer_address.address_line1),
-            'country' : cgi.escape(customer_address.country),
-            'zip' : cgi.escape(customer_address.pincode),
-            'city' : cgi.escape(customer_address.city)
-        }
+        company_address = get_primary_address(target_name=doc.company, target_type="Company")
         
+        if company_address:
+            data['biller'] = {
+                'company_name' : company.name,
+                
+                'street' : company_address.address_line1 or "",
+                'zip' : cgi.escape(company_address.pincode),
+                'city' : cgi.escape(company_address.city),
+                
+                'phone' : company.phone_no,
+                'fax' : company.fax
+            }
+        else:
+            data['biller'] = {
+                'company_name' : company.name,
+                
+                'street' : None,
+                'zip' : None,
+                'city' : None,
+                
+				'phone' : company.phone_no,
+                'fax' : company.fax
+			}
+            
+        #balance
+        #taxes_charges = frappe.get_doc('Sales Taxes and Charges', doc.taxes)
+        
+            
+        data['balance'] = {
+            'currency' : doc.currency,
+            'total' : doc.total,
+            'net_total' : doc.net_total,
+            'vat_number' : doc.tax_id,
+            'vat' : doc.total_taxes_and_charges,
+            #'vat_rate' : taxes_charges.rate,
+            'amount' : doc.total_taxes_and_charges
+        } 
+            
+           
+        #patient part does not workyet, comment till line 101 for working tarpoint
         #patient
         patient = frappe.get_doc('Patient', doc.patient)
-        patient_adress = get_primary_address(target_name=doc.patient, target_type="Patient")
-        data['patient'] = {
-            'birthday' : patient.dob,
-            'gender' :  patient.sex,
-            'family_name' :  patient.patient_name,
-            'street' : cgi.escape(patient_adress.address_line1),
-            'country' : cgi.escape(patient_adress.country),
-            'zip' : cgi.escape(patient_adress.pincode),
-            'city' : cgi.escape(patient_adress.city)
-        }     
+        patient_address = get_primary_address(target_name=doc.patient, target_type="Patinet")
+        
+        if patient_address:
+            data['patient'] = {
+                'salutation' : patient.salutation,
+                'familyname' : patient.patient_name,
+                'givenname' : patient.patient_name,
+                'street' : cgi.escape(patient_address.address_line1),
+                'country' : cgi.escape(patient_address.country),
+                'pincode' : cgi.escape(patient_address.pincode),
+                'city' : cgi.escape(patient_address.city)
+            }
+        else:
+            data['patient'] = {
+                #'salutation' : patient.salutation,
+                #'familyname' : patient.patient_name,
+                #'givenname' : patient.patient_name,
+                'salutation' : None,
+                'familyname' : None,
+                'givenname' : None,
+                'street' : None,
+                'country' : None,
+                'pincode' : None,
+                'city' : None,
+			}
+            
+            
 
-
-#richtiges template nch eibbinden
-        content = frappe.render_template('erpnextswiss/spinadent/doctype/tarpoint_setting/templateTest.html', data) #renders template and data from database
+        content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/templateTest.html', data)
         return {'content': content} #returns data
      
-           
-        #richtiges template nch eibbinden
-        content = frappe.render_template('erpnextswiss/spinadent/doctype/tarpoint_setting/templateTest.html', data) #renders template and data from database
-        return {'content': content}
-
+        
