@@ -18,8 +18,8 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             doc=frappe.get_doc('Sales order', so)
         elif sinv:
             doc=frappe.get_doc('Sales Invoice', sinv) 
-        elif dn:
-            doc=frappe.get_doc('Delivery Note', dn) 
+        elif qtn:
+            doc=frappe.get_doc('Quotation', qtn) 
         else:
             frappe.throw("Provide an argument")
         data = {}
@@ -71,34 +71,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         } 
             
            
-        #patient part does not workyet, comment till line 101 for working tarpoint
-        #patient
-        patient = frappe.get_doc('Patient', doc.patient)
-        patient_address = get_primary_address(target_name=doc.patient, target_type="Patinet")
         
-        if patient_address:
-            data['patient'] = {
-                'salutation' : patient.salutation,
-                'familyname' : patient.patient_name,
-                'givenname' : patient.patient_name,
-                'street' : cgi.escape(patient_address.address_line1),
-                'country' : cgi.escape(patient_address.country),
-                'pincode' : cgi.escape(patient_address.pincode),
-                'city' : cgi.escape(patient_address.city)
-            }
-        else:
-            data['patient'] = {
-                #'salutation' : patient.salutation,
-                #'familyname' : patient.patient_name,
-                #'givenname' : patient.patient_name,
-                'salutation' : None,
-                'familyname' : None,
-                'givenname' : None,
-                'street' : None,
-                'country' : None,
-                'pincode' : None,
-                'city' : None,
-			}
             
             
 
