@@ -25,55 +25,44 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         data = {}
         data['xml_version'] = frappe.get_value("ERPNextSwiss Settings", "ERPNextSwiss Settings", "xml_version")
         data['xml_region'] = frappe.get_value("ERPNextSwiss Settings", "ERPNextSwiss Settings", "banking_region")
-        data['date'] = time.strftime("%Y-%m-%dT%H:%M:%S")                    # creation date and time ( e.g. 2010-02-15T07:30:00 )
+        data['date'] = time.strftime("%Y-%m-%dT%H:%M:%S") # creation date and time ( e.g. 2010-02-15T07:30:00 )
       
       
       
-        #rechnungssteller
-        company = frappe.get_doc('Company', doc.company)
-        company_address = get_primary_address(target_name=doc.company, target_type="Company")
-        
-        if company_address:
-            data['biller'] = {
-                'company_name' : company.name,
-                
-                'street' : company_address.address_line1 or "",
-                'zip' : cgi.escape(company_address.pincode),
-                'city' : cgi.escape(company_address.city),
-                
-                'phone' : company.phone_no,
-                'fax' : company.fax
+        #rechnungssteller/biller ist zahnarzt
+        biller_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
+        biller_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
+         
+        data['biller'] = {
+            'designation' : biller_details.designation,
+            'family_name' : biller_details.first_name,
+            'given_name' : biller_details.last_name,
+            #'street' : cgi.escape(biller_address.address_line1),  
+            'street' : biller_address['address_line1'],
+            #statecode aus primary address county genommen, gäbe sicher noich andere richtige lösung aber momentan stimmt das so
+            'statecode' : biller_address['county'],
+            'zip' : biller_address['pincode'],
+            'city' : biller_address['city'],
+            'phone' : biller_details.mobile_phone,
+            'fax' : biller_address['fax']
             }
-        else:
-            data['biller'] = {
-                'company_name' : company.name,
-                
-                'street' : None,
-                'zip' : None,
-                'city' : None,
-                
-				'phone' : company.phone_no,
-                'fax' : company.fax
-			}
             
-        #balance
-        #taxes_charges = frappe.get_doc('Sales Taxes and Charges', doc.taxes)
-        
-            
-        data['balance'] = {
-            'currency' : doc.currency,
-            'total' : doc.total,
-            'net_total' : doc.net_total,
-            'vat_number' : doc.tax_id,
-            'vat' : doc.total_taxes_and_charges,
-            #'vat_rate' : taxes_charges.rate,
-            'amount' : doc.total_taxes_and_charges
-        } 
-            
-           
-        
+        #debitor GLEICH wie isnurance
+        debitor_details = frappe.get_doc('Patient', doc.patient)
+        insurance = frappe.get_doc('Insurance', debitor_details.insurance)
+        data['debitor'] = {
+            'company' : insurance.company_name,
+            'street' : insurance.street,
+            'zip' : insurance.pincode, 
+            'city' : insurance.city
+            }
             
             
+            
+            
+            
+            
+      
 
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/templateTest.html', data)
         return {'content': content} #returns data

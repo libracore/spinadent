@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<invoice:tarPoint>
+
+<invoice:tiers_payant payment_period="P35D">
 
 <!--Biller/Rechnungssteller -->
+<!--
     <invoice:biller>
         <invoice:company>
             <invoice:companyname>{{biller.company_name}}</invoice:companyname> 
@@ -13,51 +15,54 @@
                 </invoice:postal>
                 <invoice:telecom>
                   <invoice:phone>{{biller.phone}}</invoice:phone>
-                <invoice:fax>{{biller.fax}}</invoice:fax> -->
+                <invoice:fax>{{biller.fax}}</invoice:fax> 
                 </invoice:telecom>
         </invoice:company>
     </invoice:biller>
+-->
 
-<!--Patient/Patient -->
-    <invoice:patient>
-        <invoice:birthday></invoice:birthday>
-        <invoice:gender></invoice:gender>
-        <invoice:person>
-            <invoice:salutation>{{patient.salutation}}</invoice:salutation>
-            <invoice:familyname>{{patient.familyname}}</invoice:familyname>
-            <invoice:givenname>{{patient.givenname}}</invoice:givenname>
+   <!-- 
+   <invoice:biller ean_party="7601003000078" zsr="F066202" uid_number="CHE108791452">
+-->
+<!-- Biller -> Zahnarzt -->
+<invoice:biller>
+            <invoice:person title="{{biller.designation}}">
+            <invoice:familyname>{{biller.family_name}}</invoice:familyname>
+            <invoice:givenname>{{biller.given_name}}</invoice:givenname>
+            <invoice:subaddressing>eidg. dipl. Zahnarzt/Mitglied SSO</invoice:subaddressing>
+
+            <!-- employee company?-->
             <invoice:postal>
-                <invoice:street>{{patient.street}} 5</invoice:street>
-                <invoice:country>{{patient.country}}</invoice:country>
-                <invoice:zip>{{patient.pincode}}</invoice:zip>
-                <invoice:city>{{patient.city}}</invoice:city>
-            </invoice:postal>
-        </invoice:person>
-    </invoice:patient>
-
-<!--Balance/Betrag -->
-    <balance>
-        <currency>{{balance.currency}}</currency>
-        <amount>{{balance.total}}</amount>
-        <amount_net>{{balance.net_total}}</amount>
-        <!-- <amount_obligations>{{balance}}</amount_obligations> -->
-        <!-- <amount_due>{{balance}}</amount_due> -->
-        <vat>
-            <!-- <vat>{{balance}}</vat> DOPPELT? -->
-            <vat_number>{{balance.vat_number}}</vat_number>
-            <vat_rate>
-                <vat>{{balance.vat}}</vat>
-                <vat_rate>{{balance.vat_rate}}</vat_rate>
-                <amount>{{balance.amount}}</amount>
-            </vat_rate>    
-        </vat>
-    </balance>
+            <invoice:street>{{biller.street}}</invoice:street>
+            <!-- statecode enot implemented yet. should be found under contact-->
+            <invoice:zip statecode={{biller.statecode}}>{{biller.zip}}</invoice:zip>
+            <invoice:city>{{biller.city}}</invoice:city>
+        </invoice:postal>
+        <invoice:telecom>
+            <invoice:phone>{{biller.phone}}</invoice:phone>
+            <invoice:fax>{{biller.fax}}/invoice:fax>
+        </invoice:telecom>
+    </invoice:person>
+</invoice:biller>
 
 
+<!-- Debitor GELICH WIE insurance -->
+   <!--  <invoice:debitor ean_party="7601001007451"> -->
+<invoice:debitor>
+    <invoice:company>
+        <invoice:companyname>{{debitor.company}}</invoice:companyname>
+        <invoice:postal>
+            <invoice:street>{{debitor.street}}</invoice:street>
+            <invoice:zip>{{debitor.zip}}</invoice:zip>
+            <invoice:city>{{debitor.city}}</invoice:city>
+        </invoice:postal>
+    </invoice:company>
+</invoice:debitor>
 
 
 
-</invoice:tarPoint>
 
 
 
+
+</invoice:tiers_payant>
