@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<invoice:tiers_payant>
+
+   <!-- 
+   <invoice:biller ean_party="7601003000078" zsr="F066202" uid_number="CHE108791452">
+-->
+<!-- Biller -> Zahnarzt -->
+<invoice:biller>
+            <invoice:person title="{{biller.designation}}">
+            <invoice:familyname>{{biller.last_name}}</invoice:familyname>
+            <invoice:givenname>{{biller.first_name}}</invoice:givenname>
+            <invoice:subaddressing>eidg. dipl. Zahnarzt/Mitglied SSO</invoice:subaddressing>
+
+            <!-- employee company?-->
+            <invoice:postal>
+            <invoice:street>{{biller.street}}</invoice:street>
+            <!-- statecod enot implemented yet. should be found under contact-->
+            <invoice:zip statecode={{biller.statecode}}>{{biller.zip}}</invoice:zip>
+            <invoice:city>{{biller.city}}</invoice:city>
+        </invoice:postal>
+        <invoice:telecom>
+            <invoice:phone>{{biller.phone}}</invoice:phone>
+            <invoice:fax>{{biller.fax}}/invoice:fax>
+        </invoice:telecom>
+    </invoice:person>
+</invoice:biller>
+
+
+<!-- Debitor GELICH WIE insurance -->
+   <!--  <invoice:debitor ean_party="7601001007451"> -->
+<invoice:debitor>
+    <invoice:company>
+        <invoice:companyname>{{insurance.company}}</invoice:companyname>
+        <invoice:postal>
+            <invoice:street>{{insurance.street}}</invoice:street>
+            <invoice:zip>{{insurance.zip}}</invoice:zip>
+            <invoice:city>{{insurance.city}}</invoice:city>
+        </invoice:postal>
+    </invoice:company>
+</invoice:debitor>
+
+
+
+<!-- Provider GELICH WIE biller -->
+
+<invoice:provider>
+        <!-- <invoice:person title="Dr. med. dent."> -->
+            <invoice:person>
+            <invoice:title>{{provider.designation}}</invoice:title>
+            <invoice:familyname>{{provider.last_name}}</invoice:familyname>
+            <invoice:givenname>{{provider.first_name}}</invoice:givenname>
+            <invoice:subaddressing>eidg. dipl. Zahnarzt/Mitglied SSO</invoice:subaddressing>
+
+            <!-- employee company?-->
+            <invoice:postal>
+            <invoice:street>{{provider.street}}</invoice:street>
+            <!--  <invoice:zip statecode="BE">{{biller.zip}} </invoice:zip> -->
+            <!-- <invoice:statecode>{{biller.statecode}}</invoice:zip> -->
+            <invoice:zip statecode = {{provider.statecode}}>{{provider.zip}}</invoice:zip>
+            <invoice:city>{{provider.city}}</invoice:city>
+        </invoice:postal>
+        <invoice:telecom>
+            <invoice:phone>{{provider.phone}}</invoice:phone>
+            <invoice:fax>{{provider.fax}}/invoice:fax>
+        </invoice:telecom>
+    </invoice:person>
+</invoice:provider>
+
+<!-- Versciherung des Patienten?
+
+    Insurance GELICH WIE debitor -->
+<!-- <invoice:insurance ean_party="7601001007451"> --> 
+    <invoice:insurance>
+    <invoice:company>
+        <invoice:companyname>SUVA</invoice:companyname>
+        <invoice:postal>
+            <invoice:street>Fluhmattstrasse 1</invoice:street>
+            <invoice:zip>6002</invoice:zip>
+            <invoice:city>Luzern</invoice:city>
+        </invoice:postal>
+    </invoice:company>
+</invoice:insurance>
+
+
+<!--Patient/ gleich wie guarantor ABER MIT sex und geburtsdatum -->
+
+   <!--  <invoice:patient ssn="12345678901"> 
+    gender birthdate and salutation not implemenetd yet
+-->
+
+   <invoice:patient gender={{patient.gender}} birthdate={{patient.birthdate}} ssn="12345678901">
+        <invoice:person salutation= {{patient.salutation}}>
+            <invoice:familyname>{{patient.familyname}}</invoice:familyname>
+            <invoice:givenname>{{patient.givenname}}</invoice:givenname>
+            <invoice:postal>
+                <invoice:street>{{patient.street}}</invoice:street>
+                <invoice:country>{{patient.country}}</invoice:country>
+                <invoice:zip>{{patient.pincode}}</invoice:zip>
+                <invoice:city>{{patient.city}}</invoice:city>
+            </invoice:postal>
+        </invoice:person>
+    </invoice:patient>
+
+
+<!--Guarantor/ gleich wie patient ABER OHNE sex und geburtsdatum -->
+<!--Wie findet man patient in quotation? -->
+    <invoice:guarantor>
+        <invoice:person salutation={{guarantor.salutation}}>
+            <invoice:familyname>Muster</invoice:familyname>
+            <invoice:givenname>Peter</invoice:givenname>
+            <invoice:postal>
+                <invoice:street>Musterstrasse 5</invoice:street>
+                <invoice:zip>7304</invoice:zip>
+                <invoice:city>Maienfeld</invoice:city>
+            </invoice:postal>
+        </invoice:person>
+    </invoice:guarantor>
+
+
+
+<!--Balance/Betrag  kann man direkt aus document lesen-->
+    <balance>
+        <currency>{{balance.currency}}</currency>
+        <amount>{{balance.total}}</amount>
+        <!-- <amount_obligations>{{balance}}</amount_obligations> -->
+        <!-- <amount_due>{{balance}}</amount_due> -->
+        <vat>
+            <!-- <vat>{{balance.vat}}</vat>  -->
+            <vat_number>{{balance.vat_number}}</vat_number>
+            <vat_rate>
+                <!-- <vat>{{balance.vat}}</vat> WAS IST VAT--> 
+                <vat_rate>{{balance.vat_rate}}</vat_rate>
+                <amount>{{balance.amount}}</amount>
+            </vat_rate>    
+        </vat>
+    </balance>
+
+
+
+<!-- vat numer and vat rate are gtwo times different. why? -->
+
+        <invoice:balance currency={{balance.currency}} amount={{balance.total}} amount_obligations="4779.05" amount_due="4779.05">
+            <invoice:vat vat={{balance.vat}} vat_number={{balance.vat_number}}>
+                <invoice:vat_rate vat="0.00" vat_rate="0" amount="4681.00"/>
+                <invoice:vat_rate vat="7.01" vat_rate="7.7" amount="98.05"/>
+                
+            </invoice:vat>
+        </invoice:balance>
+    
+
+</invoice:tiers_payant>
+
