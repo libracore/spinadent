@@ -46,7 +46,7 @@
 </invoice:biller>
 
 
-<!-- Debitor GELICH WIE insurance -->
+<!-- Debitor(wer schuldet) GELICH WIE insurance -->
    <!--  <invoice:debitor ean_party="7601001007451"> -->
 <invoice:debitor>
     <invoice:company>
@@ -130,9 +130,48 @@
         </invoice:person>
     </invoice:guarantor>
 
-
-
-
-
-
 </invoice:tiers_payant>
+
+
+
+<invoice:esr9>
+	<!-- Gleich wie biller (wem wird was geschuldet)-->
+	<invoice:creditor>
+		<invoice:person title={{creditor.designation}}>
+			<invoice:familyname>{{creditor.family_name}}</invoice:familyname>
+			<invoice:givenname>{{creditor.given_name}}</invoice:givenname>
+			<invoice:postal>
+				<invoice:street>{{creditor.street}}</invoice:street>
+				<invoice:zip countrycode={{creditor.countrycode}}>{{creditor.zip}}</invoice:zip>
+				<invoice:city>{{creditor.city}}</invoice:city>
+			</invoice:postal>
+		</invoice:person>
+	</invoice:creditor>
+
+	
+	
+     <invoice:balance currency={{balance.currency}} amount={{balance.net_total}} amount_obligations={{balance.net_total}} amount_due {{balance.net_total}}> <!-- net_total aus SINV muss gleich sein wie  total aus Sales taxes and charges-->
+            <invoice:vat vat={{balance.vat}} vat_number={{balance.vat_number}}>
+                <invoice:vat_rate vat="0.00" vat_rate="0" amount={{balance.base_total}}/> <!-- Teil ohne steuern -> könnt default vat und vat_rate 0 und 0.00 setzten-->
+                <invoice:vat_rate vat={{balance.vat}} vat_rate={{balance.rate}} amount={{balance.tax_amount}}/>
+            </invoice:vat>
+        </invoice:balance>
+</invoice:esr9>
+
+<!-- <invoice:uvg case_id="123456-6789" case_date="2018-01-24T00:00:00" ssn="12345678901"/> -->
+
+<invoice: uvg/>
+
+<invoice:services>
+	    
+		{% for i in items %}
+		<invoice:service record_id={{i.record_id}} code={{i.item_code}}/>
+		{% endfor %}
+</invoice:services>
+
+
+
+
+
+
+

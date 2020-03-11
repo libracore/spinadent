@@ -110,9 +110,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             #'city' : patient_address['city']
             }
             
-            
-            
-            
+        
         #guarantor GLEICH wie patient aber OHNE sex und geburtsdatum und country
      
         data['guarantor'] = {
@@ -128,11 +126,39 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             }
             
             
-    
+        #balance
+        data['balance'] = {
+            'currency' : doc.currency,
+            'net_total' : doc.net_total,
+            #'vat' : xx; #vat irgendetwas
+            #'vat_number' : xx; #vat number
+            'base_total' : doc.total,
+            # wie kann man auf taxes rate zugreifen?
+            #'rate' : doc.taxes[0], #mwst in prozent
+            #'tax_amount' : doc.taxes[0],
+            } 
+              
+              
+        #Gleich wie biller (wem wird was geschuldet)
+        creditor_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
+        creditor_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
+         
+        data['creditor'] = {
+            'designation' : creditor_details.designation,
+            'family_name' : creditor_details.first_name,
+            'given_name' : creditor_details.last_name,
+            'street' : biller_address['address_line1'],
+            'statecode' : biller_address['county'], #nicht gute lösung -> sollte weg direkt zu statecode geben
+            'zip' : biller_address['pincode'],
+            'city' : biller_address['city']
+            }
+        
+        
+        #TODO
+        #add array/dict/table with items      
+              
             
-            
-            
-      
+ 
 
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/templateTest.html', data)
         return {'content': content} #returns data
