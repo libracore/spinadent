@@ -60,6 +60,76 @@
 </invoice:debitor>
 
 
+<!-- Provider GELICH WIE biller -->
+<invoice:provider>
+			<invoice:person title= {{provider.designation}} > 
+            <invoice:familyname>{{provider.last_name}}</invoice:familyname>
+            <invoice:givenname>{{provider.first_name}}</invoice:givenname>
+            <invoice:subaddressing>eidg. dipl. Zahnarzt/Mitglied SSO</invoice:subaddressing>
+
+            <!-- employee company?-->
+            <invoice:postal>
+            <invoice:street>{{provider.street}}</invoice:street>
+            <!--  <invoice:zip statecode="BE">{{biller.zip}} </invoice:zip> -->
+            <!-- <invoice:statecode>{{biller.statecode}}</invoice:zip> -->
+            <invoice:zip statecode = {{provider.statecode}}>{{provider.zip}}</invoice:zip>
+            <invoice:city>{{provider.city}}</invoice:city>
+        </invoice:postal>
+        <invoice:telecom>
+            <invoice:phone>{{provider.phone}}</invoice:phone>
+            <invoice:fax>{{provider.fax}}/invoice:fax>
+        </invoice:telecom>
+    </invoice:person>
+</invoice:provider>
+
+<!-- Versicherung des Patienten? - Insurance GELICH WIE debitor -->
+<!-- künstlicher doctype dafür hinzugefügt -->
+<!-- <invoice:insurance ean_party="7601001007451"> --> 
+<invoice:insurance>
+    <invoice:company>
+        <invoice:companyname>{{insurance.company}}</invoice:companyname>
+        <invoice:postal>
+            <invoice:street>{{insurance.street}}</invoice:street>
+            <invoice:zip>{{insurance.zip}}</invoice:zip>
+            <invoice:city>{{insurance.city}}</invoice:city>
+        </invoice:postal>
+    </invoice:company>
+</invoice:insurance>
+
+
+
+<!--Patient/ gleich wie guarantor ABER MIT sex und geburtsdatum -->
+
+   <!--  <invoice:patient ssn="12345678901"> 
+    gender birthdate and salutation not implemenetd yet
+-->
+   <invoice:patient gender={{patient.gender}} birthdate={{patient.birthdate}} ssn="12345678901">
+        <invoice:person salutation= {{patient.salutation}}>
+            <invoice:familyname>{{patient.family_name}}</invoice:familyname>
+            <invoice:givenname>{{patient.given_name}}</invoice:givenname>
+            <invoice:postal>
+                <invoice:street>{{patient.street}}</invoice:street>
+                <invoice:country>{{patient.country}}</invoice:country>
+                <invoice:zip>{{patient.zip}}</invoice:zip>
+                <invoice:city>{{patient.city}}</invoice:city>
+            </invoice:postal>
+        </invoice:person>
+    </invoice:patient>
+
+<!--Guarantor/ gleich wie patient ABER OHNE sex und geburtsdatum -->
+<!--Wie findet man patient in quotation? -->
+    <invoice:guarantor>
+        <invoice:person salutation={{guarantor.salutation}}>
+            <invoice:familyname>{{guarantor.family_name}}</invoice:familyname>
+            <invoice:givenname>{{guarantor.given_name}}</invoice:givenname>
+            <invoice:postal>
+                <invoice:street>{{guarantor.street}} 5</invoice:street>
+                <invoice:zip>{{guarantor.zip}}</invoice:zip>
+                <invoice:city>{{guarantor.city}}</invoice:city>
+            </invoice:postal>
+        </invoice:person>
+    </invoice:guarantor>
+
 
 
 
