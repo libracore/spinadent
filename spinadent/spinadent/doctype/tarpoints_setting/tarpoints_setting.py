@@ -21,7 +21,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         elif qtn:
             doc=frappe.get_doc('Quotation', qtn) 
         else:
-            frappe.throw("Fuck u")
+            frappe.throw("Please provide an argument")
             
         data = {}
         data['xml_version'] = frappe.get_value("ERPNextSwiss Settings", "ERPNextSwiss Settings", "xml_version")
