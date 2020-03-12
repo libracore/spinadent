@@ -41,7 +41,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             #'street' : cgi.escape(biller_address.address_line1),  
             'street' : biller_address['address_line1'],
             #statecode aus primary address county genommen, gäbe sicher noich andere richtige lösung aber momentan stimmt das so
-            'statecode' : biller_address['county'][:2].upper(),
+            'statecode' : biller_address['county'],
             'zip' : biller_address['pincode'],
             'city' : biller_address['city'],
             'phone' : biller_details.mobile_phone,
@@ -58,6 +58,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'city' : insurance.city
             }
             
+            
         #provider gleich wie biller
         provider_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
         provider_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
@@ -67,13 +68,14 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'family_name' : provider_details.first_name,
             'given_name' : provider_details.last_name,
             'street' : provider_address['address_line1'],
-            #statecode aus primary address county genommen, gäbe sicher noch andere richtige lösung aber momentan stimmt das so
-            'statecode' : provider_address['county'][:2].upper(),
+            #statecode aus primary address county genommen, gäbe sicher noich andere richtige lösung aber momentan stimmt das so
+            'statecode' : provider_address['county'][:2],
             'zip' : provider_address['pincode'],
             'city' : provider_address['city'],
             'phone' : provider_details.mobile_phone,
             'fax' : provider_address['fax']
             }    
+            
             
         #debitor GLEICH wie insurance -> greift auf gleichen doctype zu
         data['insurance'] = {
@@ -82,6 +84,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'zip' : insurance.pincode, 
             'city' : insurance.city
             }
+            
             
         #patient GLEICH wie guarantor aber MIT sex und geburtsdatum
         patient_details = frappe.get_doc('Patient', doc.patient)
@@ -109,6 +112,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             
         
         #guarantor GLEICH wie patient aber OHNE sex und geburtsdatum und country
+     
         data['guarantor'] = {
             #'salutation' : xxx; guarantor/patient misses salutation
             'family_name' : last_name,
@@ -120,6 +124,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             #'zip' : patient_address['pincode'],
             #'city' : patient_address['city']
             }
+            
             
         #balance
         data['balance'] = {
@@ -137,26 +142,24 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         #Gleich wie biller (wem wird was geschuldet)
         creditor_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
         creditor_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
+         
         data['creditor'] = {
             'designation' : creditor_details.designation,
             'family_name' : creditor_details.first_name,
             'given_name' : creditor_details.last_name,
-            'street' : creditor_address['address_line1'],
-            'country_code' : creditor_address['country_code'], #nicht gute lösung -> sollte weg direkt zu statecode geben
-            'zip' : creditor_address['pincode'],
-            'city' : creditor_address['city']
+            'street' : biller_address['address_line1'],
+            'statecode' : biller_address['county'], #nicht gute lösung -> sollte weg direkt zu statecode geben
+            'zip' : biller_address['pincode'],
+            'city' : biller_address['city']
             }
         
         
         #TODO
         #add array/dict/table with items      
-        
-        data['items'] = {
-        'items_table' : doc.items
-        }
-
               
-    
+            
+ 
+
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/templateTest.html', data)
         return {'content': content} #returns data
      
