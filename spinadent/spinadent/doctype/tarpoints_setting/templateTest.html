@@ -15,13 +15,12 @@
         <invoice:subaddressing>eidg. dipl. Zahnarzt/Mitglied SSO</invoice:subaddressing>  
         <invoice:postal>
 			<invoice:street>{{biller.street}}</invoice:street>
-			<!-- statecode implemented the wrong way yet-->
 			<invoice:zip statecode={{biller.statecode}}>{{biller.zip}}</invoice:zip>
 			<invoice:city>{{biller.city}}</invoice:city>
 		</invoice:postal> 
         <invoice:telecom>
             <invoice:phone>{{biller.phone}}</invoice:phone>
-            <invoice:fax>{{biller.fax}}/invoice:fax>
+            <invoice:fax>{{biller.fax}}</invoice:fax>
         </invoice:telecom>
     </invoice:person>
 </invoice:biller>
@@ -42,10 +41,10 @@
 <!-- Provider GELICH WIE biller -->
 <invoice:provider ean_party={{biller.gln_number}} zsr={{biller.zsr_number}}>
 	<invoice:person title= {{provider.designation}} > 
-        <invoice:familyname>{{provider.last_name}}</invoice:familyname>
-        <invoice:givenname>{{provider.first_name}}</invoice:givenname>
+        <invoice:familyname>{{provider.family_name}}</invoice:familyname>
+        <invoice:givenname>{{provider.given_name}}</invoice:givenname>
+        <!-- what is subaddressing?-->
         <invoice:subaddressing>eidg. dipl. Zahnarzt/Mitglied SSO</invoice:subaddressing>
-        <!-- employee company?-->
         <invoice:postal>
 			<invoice:street>{{provider.street}}</invoice:street>
 			<invoice:zip statecode = {{provider.statecode}}>{{provider.zip}}</invoice:zip>
@@ -127,17 +126,9 @@
 
 <!-- <invoice:uvg case_id="123456-6789" case_date="2018-01-24T00:00:00" ssn="12345678901"/> -->
 
-<invoice: uvg/>
-
 <invoice:services>
 		{% for i in items.items_table %}
 		 <invoice:service record_id={{loop.index }} tariff_type="223" code={{i.item_code}} quantity={{i.qty}} provider_id={{biller.gln_number}} responsible_id={{biller.gln_number}} unit_factor="1" amount={{i.amount}}/> 
 		{% endfor %}	
 </invoice:services>
-
-
-
-
-
-
 

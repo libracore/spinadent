@@ -29,7 +29,6 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         data['date'] = time.strftime("%Y-%m-%dT%H:%M:%S") # creation date and time ( e.g. 2010-02-15T07:30:00 )
       
       
-      
         #rechnungssteller/biller ist zahnarzt
         biller_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
         biller_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
@@ -40,12 +39,10 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             practitioner_gln_number = "G999999"
          
          
-         
         data['biller'] = {
             'designation' : biller_details.designation,
             'family_name' : biller_details.first_name,
             'given_name' : biller_details.last_name,
-            #'street' : cgi.escape(biller_address.address_line1),  
             'street' : biller_address['address_line1'],
             #statecode aus primary address county genommen, gäbe sicher noich andere richtige lösung aber momentan stimmt das so
             'statecode' : biller_address['county'][:2].upper(),
@@ -58,21 +55,14 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'tax_id' : biller_details.tax_id
             }
             
-            
-            
-            
         #debitor GLEICH wie isnurance
         debitor_details = frappe.get_doc('Patient', doc.patient)
         insurance = frappe.get_doc('Insurance', debitor_details.insurance)
-        
         
         if insurance.gln_nummer:
             insurance_gln_number = insurance.gln_nummer
         else: 
             insurance_gln_number = "G999999"
-         
-        
-        
         
         data['debitor'] = {
             'company' : insurance.company_name,
@@ -106,7 +96,8 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'company' : insurance.company_name,
             'street' : insurance.street,
             'zip' : insurance.pincode, 
-            'city' : insurance.city
+            'city' : insurance.city,
+            'gln_nr' : insurance.gln_nummer
             }
             
         #patient GLEICH wie guarantor aber MIT sex und geburtsdatum
@@ -117,14 +108,18 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         first_name = name.split()[0];
         last_name = name.split()[-1]
         
+        if patient_details.sex == "Female":
+            salutation = "Frau"
+        else:
+            salutation = "Herr"
         
+
         data['patient'] = {
             'gender' : patient_details.sex,
             'birthdate' : patient_details.dob,
-            #'salutation' : xxx; patient misses salutation
+            'salutation' : salutation,
             'family_name' : last_name,
             'given_name' : first_name,
-            
             #addressection hardcoded over inapp cuspmizations, not html access 
             'street' : patient_details.street,
             'country' : patient_details.country,
@@ -132,21 +127,17 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'city' : patient_details.city,
             #ahv nummer hardcoded in system
             'ahv_number' : patient_details.ahv_nummer
-            
             }
             
-        
+        #könnte man später eigentlcih weglasen um code zu sparen
         #guarantor GLEICH wie patient aber OHNE sex und geburtsdatum und country
         data['guarantor'] = {
-            #'salutation' : xxx; guarantor/patient misses salutation
+            'salutation' : salutation,
             'family_name' : last_name,
             'given_name' : first_name,
-            
-            #guerantor/patient misses whole address section
-            
-            #'street' : patient_address['address_line1'],
-            #'zip' : patient_address['pincode'],
-            #'city' : patient_address['city']
+            'street' : patient_details.street,
+            'zip' : patient_details.pincode,
+            'city' : patient_details.city,
             }
             
         #balance
@@ -161,7 +152,6 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             #'tax_amount' : doc.taxes[0],
             } 
               
-              
         #Gleich wie biller (wem wird was geschuldet)
         creditor_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
         creditor_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
@@ -175,17 +165,13 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'city' : creditor_address['city']
             }
         
-        
         #TODO
         #add array/dict/table with items      
-        
         data['items'] = {
         'items_table' : doc.items
         }
 
-
         #additional data
-        
         if doc.payment_terms_template:
             payment_terms_template = frappe.get_doc("Payment Terms Template", doc.payment_terms_template)
             if payment_terms_template:
@@ -195,24 +181,10 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         else:
             due_period = 30
         
-        
-        
-        
         data['payment_period'] ={
         'py_pr' : "Payment is due within {0} days from invoice date.".format(due_period)
         } 
-        
-        
-        
-
-
-
-
-
-
-
-
-              
+      
     
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/templateTest.html', data)
         return {'content': content} #returns data
