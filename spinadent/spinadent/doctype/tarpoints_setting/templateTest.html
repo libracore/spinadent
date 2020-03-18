@@ -131,8 +131,8 @@
 
 <invoice:services>
 		{% for i in items.items_table %}
-		<invoice:service record_id={{i.item_name}} code={{i.item_code}}/>
-		{% endfor %}
+		 <invoice:service record_id={{loop.index }} tariff_type="223" code={{i.item_code}} quantity={{i.qty}} provider_id={{biller.gln_number}} responsible_id={{biller.gln_number}} unit_factor="1" amount={{i.amount}}/> 
+		{% endfor %}	
 </invoice:services>
 
 
