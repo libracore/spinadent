@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 
-<!-- <invoice:tiers_payant payment_period="P35D"> -->
+<
 
-<invoice:tiers_payant>
-  <!-- FÜR ZSRF FOLGENDEN PLATZHALTER EINTARGEN: G999999 -->
+<invoice:tiers_payant payment_period={{payment_period.py_pr}}>
+
   
-  
-  <!-- Biller -> Zahnarzt -->
-<!--  <invoice:biller ean_party="7601003000078" zsr="F066202" uid_number="CHE108791452"> -->
-<invoice:biller>
+<!-- Biller -> Zahnarzt -->
+<invoice:biller ean_party={{biller.gln_number}} zsr={{biller.zsr_number}} uid_number={{biller.tax_id}}> 
     <invoice:person title="{{biller.designation}}">
         <invoice:familyname>{{biller.family_name}}</invoice:familyname>
         <invoice:givenname>{{biller.given_name}}</invoice:givenname>
@@ -29,7 +27,7 @@
 </invoice:biller>
 
 <!-- Debitor(wer schuldet) GELICH WIE insurance -->
-<!--  <invoice:debitor ean_party="7601001007451"> -->
+<invoice:debitor ean_party={{insurance.gln_nr}}> 
 <invoice:debitor>
     <invoice:company>
         <invoice:companyname>{{debitor.company}}</invoice:companyname>
@@ -42,9 +40,7 @@
 </invoice:debitor>
 
 <!-- Provider GELICH WIE biller -->
-<!-- FÜR ZSRF FOLGENDEN PLATZHALTER EINTARGEN: G999999 -->
-<!-- <invoice:provider ean_party="7601003000078" zsr="F066202"> -->
-<invoice:provider>
+<invoice:provider ean_party={{biller.gln_number}} zsr={{biller.zsr_number}}>
 	<invoice:person title= {{provider.designation}} > 
         <invoice:familyname>{{provider.last_name}}</invoice:familyname>
         <invoice:givenname>{{provider.first_name}}</invoice:givenname>
@@ -52,8 +48,6 @@
         <!-- employee company?-->
         <invoice:postal>
 			<invoice:street>{{provider.street}}</invoice:street>
-			<!--  <invoice:zip statecode="BE">{{biller.zip}} </invoice:zip> -->
-			<!-- <invoice:statecode>{{biller.statecode}}</invoice:zip> -->
 			<invoice:zip statecode = {{provider.statecode}}>{{provider.zip}}</invoice:zip>
 			<invoice:city>{{provider.city}}</invoice:city>
 		</invoice:postal>
@@ -65,9 +59,7 @@
 </invoice:provider>
 
 <!-- Versicherung des Patienten? - Insurance GELICH WIE debitor -->
-<!-- künstlicher doctype dafür hinzugefügt -->
-<!-- <invoice:insurance ean_party="7601001007451"> --> 
-<invoice:insurance>
+<invoice:insurance ean_party={{insurance.gln_nr}}> 
     <invoice:company>
         <invoice:companyname>{{insurance.company}}</invoice:companyname>
         <invoice:postal>
@@ -80,8 +72,7 @@
 
 <!--Patient/ gleich wie guarantor ABER MIT sex und geburtsdatum -->
 <!-- gender birthdate and salutation not implemenetd yet -->
- <!--  <invoice:patient ssn="12345678901">  -->
-   <invoice:patient gender={{patient.gender}} birthdate={{patient.birthdate}} ssn="12345678901">
+   <invoice:patient gender={{patient.gender}} birthdate={{patient.birthdate}} ssn={{patient.ahv_number}}>
         <invoice:person salutation= {{patient.salutation}}>
             <invoice:familyname>{{patient.family_name}}</invoice:familyname>
             <invoice:givenname>{{patient.given_name}}</invoice:givenname>
@@ -95,7 +86,6 @@
     </invoice:patient>
 
 <!--Guarantor/ gleich wie patient ABER OHNE sex und geburtsdatum -->
-<!--Wie findet man patient in quotation? -->
     <invoice:guarantor>
         <invoice:person salutation={{guarantor.salutation}}>
             <invoice:familyname>{{guarantor.family_name}}</invoice:familyname>

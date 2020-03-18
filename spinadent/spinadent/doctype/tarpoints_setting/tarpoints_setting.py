@@ -34,6 +34,13 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         biller_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
         biller_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
          
+        if biller_details.gln_number:
+            practitioner_gln_number = biller_details.gln_number
+        else: 
+            practitioner_gln_number = "G999999"
+         
+         
+         
         data['biller'] = {
             'designation' : biller_details.designation,
             'family_name' : biller_details.first_name,
@@ -45,17 +52,34 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'zip' : biller_address['pincode'],
             'city' : biller_address['city'],
             'phone' : biller_details.mobile_phone,
-            'fax' : biller_address['fax']
+            'fax' : biller_address['fax'],
+            'gln_number': practitioner_gln_number,
+            'zsr_number' : biller_details.zsr_number,
+            'tax_id' : biller_details.tax_id
             }
+            
+            
+            
             
         #debitor GLEICH wie isnurance
         debitor_details = frappe.get_doc('Patient', doc.patient)
         insurance = frappe.get_doc('Insurance', debitor_details.insurance)
+        
+        
+        if insurance.gln_nummer:
+            insurance_gln_number = insurance.gln_nummer
+        else: 
+            insurance_gln_number = "G999999"
+         
+        
+        
+        
         data['debitor'] = {
             'company' : insurance.company_name,
             'street' : insurance.street,
             'zip' : insurance.pincode, 
-            'city' : insurance.city
+            'city' : insurance.city,
+            'gln_nr' : insurance_gln_number
             }
             
         #provider gleich wie biller
@@ -72,7 +96,9 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'zip' : provider_address['pincode'],
             'city' : provider_address['city'],
             'phone' : provider_details.mobile_phone,
-            'fax' : provider_address['fax']
+            'fax' : provider_address['fax'],
+            'gln_number': practitioner_gln_number,
+            'zsr_number' : provider_details.zsr_number,
             }    
             
         #debitor GLEICH wie insurance -> greift auf gleichen doctype zu
@@ -99,12 +125,14 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'family_name' : last_name,
             'given_name' : first_name,
             
-            #patient misses whole address section
+            #addressection hardcoded over inapp cuspmizations, not html access 
+            'street' : patient_details.street,
+            'country' : patient_details.country,
+            'zip' : patient_details.pincode,
+            'city' : patient_details.city,
+            #ahv nummer hardcoded in system
+            'ahv_number' : patient_details.ahv_nummer
             
-            #'street' : patient_address['address_line1'],
-            #'country' : patient_address['county'],
-            #'zip' : patient_address['pincode'],
-            #'city' : patient_address['city']
             }
             
         
@@ -154,6 +182,35 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         data['items'] = {
         'items_table' : doc.items
         }
+
+
+        #additional data
+        
+        if doc.payment_terms_template:
+            payment_terms_template = frappe.get_doc("Payment Terms Template", doc.payment_terms_template)
+            if payment_terms_template:
+                due_period = payment_terms_template.terms[0].credit_days
+            else:
+                due_period = 30
+        else:
+            due_period = 30
+        
+        
+        
+        
+        data['payment_period'] ={
+        'py_pr' : "Payment is due within {0} days from invoice date.".format(due_period)
+        } 
+        
+        
+        
+
+
+
+
+
+
+
 
               
     
