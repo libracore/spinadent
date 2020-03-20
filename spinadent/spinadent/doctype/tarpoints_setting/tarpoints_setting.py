@@ -15,7 +15,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         if dn:
             doc = frappe.get_doc('Delivery Note', dn)
         elif so:
-            doc=frappe.get_doc('Sales order', so)
+            doc=frappe.get_doc('Sales Order', so)
         elif sinv:
             doc=frappe.get_doc('Sales Invoice', sinv) 
         elif qtn:
