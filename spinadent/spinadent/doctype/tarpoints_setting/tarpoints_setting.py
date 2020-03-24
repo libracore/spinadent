@@ -8,7 +8,8 @@ from frappe.model.document import Document
 from datetime import datetime, timedelta
 import time
 from erpnextswiss.erpnextswiss.common_functions import get_building_number, get_street_name, get_pincode, get_city, get_primary_address
-import cgi          # used to escape xml content
+import cgi          
+import re
     
 @frappe.whitelist()
 def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
@@ -26,10 +27,8 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         data = {}
         data['xml_version'] = frappe.get_value("ERPNextSwiss Settings", "ERPNextSwiss Settings", "xml_version")
         data['xml_region'] = frappe.get_value("ERPNextSwiss Settings", "ERPNextSwiss Settings", "banking_region")
-        data['date'] = time.strftime("%Y-%m-%dT%H:%M:%S") # creation date and time ( e.g. 2010-02-15T07:30:00 )
+        data['date'] = time.strftime("%Y-%m-%dT%H:%M:%S") 
       
-      
-        #rechnungssteller/biller ist zahnarzt
         biller_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
         biller_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
          
@@ -37,14 +36,12 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             practitioner_gln_number = biller_details.gln_number
         else: 
             practitioner_gln_number = "G999999"
-         
-         
+        
         data['biller'] = {
             'designation' : biller_details.designation,
             'family_name' : biller_details.first_name,
             'given_name' : biller_details.last_name,
             'street' : biller_address['address_line1'],
-            #statecode aus primary address county genommen, gäbe sicher noich andere richtige lösung aber momentan stimmt das so
             'statecode' : biller_address['county'][:2].upper(),
             'zip' : biller_address['pincode'],
             'city' : biller_address['city'],
@@ -52,10 +49,10 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'fax' : biller_address['fax'],
             'gln_number': practitioner_gln_number,
             'zsr_number' : biller_details.zsr_number,
-            'tax_id' : biller_details.tax_id
+            'tax_id' : biller_details.tax_id,
+            'subaddressing' : biller_details.department
             }
-            
-        #debitor GLEICH wie isnurance
+
         debitor_details = frappe.get_doc('Patient', doc.patient)
         insurance = frappe.get_doc('Insurance', debitor_details.insurance)
         
@@ -72,7 +69,6 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'gln_nr' : insurance_gln_number
             }
             
-        #provider gleich wie biller
         provider_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
         provider_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
          
@@ -81,7 +77,6 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'family_name' : provider_details.first_name,
             'given_name' : provider_details.last_name,
             'street' : provider_address['address_line1'],
-            #statecode aus primary address county genommen, gäbe sicher noch andere richtige lösung aber momentan stimmt das so
             'statecode' : provider_address['county'][:2].upper(),
             'zip' : provider_address['pincode'],
             'city' : provider_address['city'],
@@ -89,9 +84,9 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'fax' : provider_address['fax'],
             'gln_number': practitioner_gln_number,
             'zsr_number' : provider_details.zsr_number,
+            'subaddressing' : provider_details.department
             }    
             
-        #debitor GLEICH wie insurance -> greift auf gleichen doctype zu
         data['insurance'] = {
             'company' : insurance.company_name,
             'street' : insurance.street,
@@ -100,7 +95,6 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'gln_nr' : insurance.gln_nummer
             }
             
-        #patient GLEICH wie guarantor aber MIT sex und geburtsdatum
         patient_details = frappe.get_doc('Patient', doc.patient)
         patient_address = get_primary_address(target_name=doc.patient, target_type="Patient")
         
@@ -113,24 +107,19 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         else:
             salutation = "Herr"
         
-
         data['patient'] = {
             'gender' : patient_details.sex,
             'birthdate' : patient_details.dob,
             'salutation' : salutation,
             'family_name' : last_name,
             'given_name' : first_name,
-            #addressection hardcoded over inapp cuspmizations, not html access 
             'street' : patient_details.street,
             'country' : patient_details.country,
             'zip' : patient_details.pincode,
             'city' : patient_details.city,
-            #ahv nummer hardcoded in system
             'ahv_number' : patient_details.ahv_nummer
             }
             
-        #könnte man später eigentlcih weglasen um code zu sparen
-        #guarantor GLEICH wie patient aber OHNE sex und geburtsdatum und country
         data['guarantor'] = {
             'salutation' : salutation,
             'family_name' : last_name,
@@ -140,19 +129,21 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'city' : patient_details.city,
             }
             
-        #balance
+        tax_id_toInt = ""  
+        if doc.tax_id: 
+            t_id = doc.tax_id
+            tax_id_toInt = re.sub("[^0-9]", "", t_id)
+      
+        taxless_amount = (doc.net_total) - (doc.total_taxes_and_charges)
+       
         data['balance'] = {
             'currency' : doc.currency,
             'net_total' : doc.net_total,
-            #'vat' : xx; #vat irgendetwas
-            #'vat_number' : xx; #vat number
-            'base_total' : doc.total,
-            # wie kann man auf taxes rate zugreifen?
-            #'rate' : doc.taxes[0], #mwst in prozent
-            #'tax_amount' : doc.taxes[0],
+            'tax_id' : tax_id_toInt,
+            'taxless_total' : taxless_amount, 
+            'total_taxes' : doc.total_taxes_and_charges 
             } 
               
-        #Gleich wie biller (wem wird was geschuldet)
         creditor_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
         creditor_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
         data['creditor'] = {
@@ -160,18 +151,15 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'family_name' : creditor_details.first_name,
             'given_name' : creditor_details.last_name,
             'street' : creditor_address['address_line1'],
-            'country_code' : creditor_address['country_code'], #nicht gute lösung -> sollte weg direkt zu statecode geben
+            'country_code' : creditor_address['country_code'], 
             'zip' : creditor_address['pincode'],
             'city' : creditor_address['city']
             }
-        
-        #TODO
-        #add array/dict/table with items      
+          
         data['items'] = {
         'items_table' : doc.items
         }
 
-        #additional data
         if doc.payment_terms_template:
             payment_terms_template = frappe.get_doc("Payment Terms Template", doc.payment_terms_template)
             if payment_terms_template:
@@ -187,6 +175,6 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
       
     
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/templateTest.html', data)
-        return {'content': content} #returns data
+        return {'content': content}
      
         
