@@ -2,75 +2,75 @@
 
 <invoice:tiers_payant payment_period={{payment_period.py_pr}}>
 
-	<invoice:biller ean_party={{biller.gln_number}} zsr={{biller.zsr_number}} uid_number={{biller.tax_id}}> 
-		<invoice:person title="{{biller.designation}}">
-			<invoice:familyname>{{biller.family_name}}</invoice:familyname>
-			<invoice:givenname>{{biller.given_name}}</invoice:givenname>
-			<invoice:subaddressing>{{biller.subaddressing}}</invoice:subaddressing>  
-			<invoice:postal>
-				<invoice:street>{{biller.street}}</invoice:street>
-				<invoice:zip statecode={{biller.statecode}}>{{biller.zip}}</invoice:zip>
-				<invoice:city>{{biller.city}}</invoice:city>
-			</invoice:postal> 
-			<invoice:telecom>
-				<invoice:phone>{{biller.phone}}</invoice:phone>
-				<invoice:fax>{{biller.fax}}</invoice:fax>
-			</invoice:telecom>
-		</invoice:person>
-	</invoice:biller>
+    <invoice:biller ean_party={{biller.gln_number}} zsr={{biller.zsr_number}} uid_number={{biller.tax_id}}> 
+        <invoice:person title="{{biller.designation}}">
+            <invoice:familyname>{{biller.family_name}}</invoice:familyname>
+            <invoice:givenname>{{biller.given_name}}</invoice:givenname>
+            <invoice:subaddressing>{{biller.subaddressing}}</invoice:subaddressing>  
+            <invoice:postal>
+                <invoice:street>{{biller.street}}</invoice:street>
+                <invoice:zip statecode={{biller.statecode}}>{{biller.zip}}</invoice:zip>
+                <invoice:city>{{biller.city}}</invoice:city>
+            </invoice:postal> 
+            <invoice:telecom>
+                <invoice:phone>{{biller.phone}}</invoice:phone>
+                <invoice:fax>{{biller.fax}}</invoice:fax>
+            </invoice:telecom>
+        </invoice:person>
+    </invoice:biller>
 
-	<invoice:debitor ean_party={{insurance.gln_nr}}> 
-	<invoice:debitor>
-		<invoice:company>
-			<invoice:companyname>{{debitor.company}}</invoice:companyname>
-			<invoice:postal>
-				<invoice:street>{{debitor.street}}</invoice:street>
-				<invoice:zip>{{debitor.zip}}</invoice:zip>
-				<invoice:city>{{debitor.city}}</invoice:city>
-			</invoice:postal>
-		</invoice:company>
-	</invoice:debitor>
+    <invoice:debitor ean_party={{insurance.gln_nr}}> 
+    <invoice:debitor>
+        <invoice:company>
+            <invoice:companyname>{{debitor.company}}</invoice:companyname>
+            <invoice:postal>
+                <invoice:street>{{debitor.street}}</invoice:street>
+                <invoice:zip>{{debitor.zip}}</invoice:zip>
+                <invoice:city>{{debitor.city}}</invoice:city>
+            </invoice:postal>
+        </invoice:company>
+    </invoice:debitor>
 
-	<invoice:provider ean_party={{biller.gln_number}} zsr={{biller.zsr_number}}>
-		<invoice:person title= {{provider.designation}} > 
-			<invoice:familyname>{{provider.family_name}}</invoice:familyname>
-			<invoice:givenname>{{provider.given_name}}</invoice:givenname>
-			<invoice:subaddressing>{{provider.subaddressing}}</invoice:subaddressing>
-			<invoice:postal>
-				<invoice:street>{{provider.street}}</invoice:street>
-				<invoice:zip statecode = {{provider.statecode}}>{{provider.zip}}</invoice:zip>
-				<invoice:city>{{provider.city}}</invoice:city>
-			</invoice:postal>
-			<invoice:telecom>
-				<invoice:phone>{{provider.phone}}</invoice:phone>
-				<invoice:fax>{{provider.fax}}/invoice:fax>
-			</invoice:telecom>	
-		</invoice:person>
-	</invoice:provider>
+    <invoice:provider ean_party={{biller.gln_number}} zsr={{biller.zsr_number}}>
+        <invoice:person title= {{provider.designation}} > 
+            <invoice:familyname>{{provider.family_name}}</invoice:familyname>
+            <invoice:givenname>{{provider.given_name}}</invoice:givenname>
+            <invoice:subaddressing>{{provider.subaddressing}}</invoice:subaddressing>
+            <invoice:postal>
+                <invoice:street>{{provider.street}}</invoice:street>
+                <invoice:zip statecode = {{provider.statecode}}>{{provider.zip}}</invoice:zip>
+                <invoice:city>{{provider.city}}</invoice:city>
+            </invoice:postal>
+            <invoice:telecom>
+                <invoice:phone>{{provider.phone}}</invoice:phone>
+                <invoice:fax>{{provider.fax}}/invoice:fax>
+            </invoice:telecom>  
+        </invoice:person>
+    </invoice:provider>
 
-	<invoice:insurance ean_party={{insurance.gln_nr}}> 
-		<invoice:company>
-			<invoice:companyname>{{insurance.company}}</invoice:companyname>
-			<invoice:postal>
-				<invoice:street>{{insurance.street}}</invoice:street>
-				<invoice:zip>{{insurance.zip}}</invoice:zip>
-				<invoice:city>{{insurance.city}}</invoice:city>
-			</invoice:postal>
-		</invoice:company>
-	</invoice:insurance>
+    <invoice:insurance ean_party={{insurance.gln_nr}}> 
+        <invoice:company>
+            <invoice:companyname>{{insurance.company}}</invoice:companyname>
+            <invoice:postal>
+                <invoice:street>{{insurance.street}}</invoice:street>
+                <invoice:zip>{{insurance.zip}}</invoice:zip>
+                <invoice:city>{{insurance.city}}</invoice:city>
+            </invoice:postal>
+        </invoice:company>
+    </invoice:insurance>
 
-	<invoice:patient gender={{patient.gender}} birthdate={{patient.birthdate}} ssn={{patient.ahv_number}}>
-		<invoice:person salutation= {{patient.salutation}}>
-			<invoice:familyname>{{patient.family_name}}</invoice:familyname>
-			<invoice:givenname>{{patient.given_name}}</invoice:givenname>
-			<invoice:postal>
-				<invoice:street>{{patient.street}}</invoice:street>
-				<invoice:country>{{patient.country}}</invoice:country>
-				<invoice:zip>{{patient.zip}}</invoice:zip>
-				<invoice:city>{{patient.city}}</invoice:city>
-			</invoice:postal>
-		</invoice:person>
-	</invoice:patient>
+    <invoice:patient gender={{patient.gender}} birthdate={{patient.birthdate}} ssn={{patient.ahv_number}}>
+        <invoice:person salutation= {{patient.salutation}}>
+            <invoice:familyname>{{patient.family_name}}</invoice:familyname>
+            <invoice:givenname>{{patient.given_name}}</invoice:givenname>
+            <invoice:postal>
+                <invoice:street>{{patient.street}}</invoice:street>
+                <invoice:country>{{patient.country}}</invoice:country>
+                <invoice:zip>{{patient.zip}}</invoice:zip>
+                <invoice:city>{{patient.city}}</invoice:city>
+            </invoice:postal>
+        </invoice:person>
+    </invoice:patient>
 
     <invoice:guarantor>
         <invoice:person salutation={{guarantor.salutation}}>
@@ -88,21 +88,22 @@
 
 
 <invoice:esr9>
-	
-	<invoice:creditor>
-		<invoice:person title={{creditor.designation}}>
-			<invoice:familyname>{{creditor.family_name}}</invoice:familyname>
-			<invoice:givenname>{{creditor.given_name}}</invoice:givenname>
-			<invoice:postal>
-				<invoice:street>{{creditor.street}}</invoice:street>
-				<invoice:zip countrycode={{creditor.country_code}}>{{creditor.zip}}</invoice:zip>
-				<invoice:city>{{creditor.city}}</invoice:city>
-			</invoice:postal>
-		</invoice:person>
-	</invoice:creditor>
+    
+    <invoice:creditor>
+        <invoice:person title={{creditor.designation}}>
+            <invoice:familyname>{{creditor.family_name}}</invoice:familyname>
+            <invoice:givenname>{{creditor.given_name}}</invoice:givenname>
+            <invoice:postal>
+                <invoice:street>{{creditor.street}}</invoice:street>
+                <invoice:zip countrycode={{creditor.country_code}}>{{creditor.zip}}</invoice:zip>
+                <invoice:city>{{creditor.city}}</invoice:city>
+            </invoice:postal>
+        </invoice:person>
+    </invoice:creditor>
 
      <invoice:balance currency={{balance.currency}} amount={{balance.net_total}} amount_obligations={{balance.net_total}} amount_due={{balance.net_total}}> 
-            <invoice:vat vat="7.7" vat_number={{balance.tax_id}}> 
+            <!-- <invoice:vat vat="7.7" vat_number={{balance.tax_id}}> -->
+            <invoice:vat vat="7.7"> 
                 <invoice:vat_rate vat="0.00" vat_rate="0" amount={{balance.taxless_total}}/> 
                 <invoice:vat_rate vat="7.7" vat_rate="7.7" amount3={{balance.total_taxes}}/>
             </invoice:vat>
@@ -113,9 +114,9 @@
 <!-- <invoice:uvg case_id="123456-6789" case_date="2018-01-24T00:00:00" ssn="12345678901"/> -->
 
 <invoice:services> <!--session,unit missing  -->
-		{% for i in items.items_table %}
-		 <invoice:service record_id={{loop.index }} tariff_type="223" code={{i.item_code}} quantity={{i.qty}} provider_id={{biller.gln_number}} responsible_id={{biller.gln_number}} unit = "1" unit_factor="1" amount={{i.amount}} vat_rate="7.7" service_attributes="0" obligation="1" name={{i.item_name}} /> 
-		{% endfor %}	
+        {% for i in items.items_table %}
+         <invoice:service record_id={{loop.index }} tariff_type="223" code={{i.item_code}} quantity={{i.qty}} provider_id={{biller.gln_number}} responsible_id={{biller.gln_number}} unit = "1" unit_factor="1" amount={{i.amount}} vat_rate="7.7" service_attributes="0" obligation="1" name={{i.item_name}} /> 
+        {% endfor %}    
 </invoice:services>
 
 

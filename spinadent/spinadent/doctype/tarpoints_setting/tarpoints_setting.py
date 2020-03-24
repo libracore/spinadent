@@ -49,7 +49,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'fax' : biller_address['fax'],
             'gln_number': practitioner_gln_number,
             'zsr_number' : biller_details.zsr_number,
-            'tax_id' : biller_details.tax_id,
+            #'tax_id' : biller_details.tax_id,
             'subaddressing' : biller_details.department
             }
 
@@ -177,4 +177,3 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/templateTest.html', data)
         return {'content': content}
      
-        
