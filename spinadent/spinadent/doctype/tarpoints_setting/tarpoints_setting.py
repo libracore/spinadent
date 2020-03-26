@@ -42,7 +42,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'family_name' : biller_details.first_name,
             'given_name' : biller_details.last_name,
             'street' : biller_address.get('address_line1', ''),
-            'statecode' : biller_address.get('county', 'SG')][:2].upper(),
+            'statecode' : biller_address.get('county', 'SG')[:2].upper(),
             'zip' : biller_address.get('pincode', '9000'),
             'city' : biller_address.get('city', 'Berschis'),
             'phone' : biller_details.mobile_phone,
