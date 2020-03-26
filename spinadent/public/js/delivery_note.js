@@ -16,7 +16,7 @@ function generate_tarpoint(frm) {
           callback: function(r) {
                if (r.message) {
                     // prepare the xml file for download
-                    var document_name = "TP " + frm.doc.name 
+                    var document_name = "TP " + frm.doc.name + ".xml"; 
                     download(document_name, r.message.content);
                    // download("tarpoint.xml", r.message.content);
                } 
