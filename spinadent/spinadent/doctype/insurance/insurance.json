@@ -26,6 +26,11 @@
    "label": "Zip"
   },
   {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
    "fieldname": "country",
    "fieldtype": "Link",
    "label": "Country",
