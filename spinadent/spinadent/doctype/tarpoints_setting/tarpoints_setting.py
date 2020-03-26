@@ -46,7 +46,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'zip' : biller_address['pincode'],
             'city' : biller_address['city'],
             'phone' : biller_details.mobile_phone,
-            'fax' : biller_address['fax'],
+            'fax' : biller_address.get('fax') or "",
             'gln_number': practitioner_gln_number,
             'zsr_number' : biller_details.zsr_number,
             #'tax_id' : biller_details.tax_id,
