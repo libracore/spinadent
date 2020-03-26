@@ -35,8 +35,12 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         if biller_details.gln_number:
             practitioner_gln_number = biller_details.gln_number
         else: 
-            practitioner_gln_number = "G999999"
-        
+            practitioner_gln_number = "2000000000000"
+        if biller_details.zsr_number:
+            practitioner_zsr_number = biller_details.zsr_number
+        else: 
+            practitioner_zsr_number = "G999999"
+            
         data['biller'] = {
             'designation' : biller_details.designation,
             'family_name' : biller_details.first_name,
@@ -48,7 +52,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'phone' : biller_details.mobile_phone,
             'fax' : biller_address.get('fax', ""),
             'gln_number': practitioner_gln_number,
-            'zsr_number' : biller_details.zsr_number,
+            'zsr_number' : practitioner_zsr_number,
             #'tax_id' : biller_details.tax_id,
             'subaddressing' : biller_details.department
             }
