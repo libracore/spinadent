@@ -28,15 +28,14 @@
   {
    "fieldname": "country",
    "fieldtype": "Link",
-   "label": "Country"
+   "label": "Country",
    "options": "Country"
   },
   {
    "fieldname": "gln_nummer",
    "fieldtype": "Data",
    "label": "GLN Nummer"
-  }
-  
+  }  
  ],
  "modified": "2020-03-26 15:04:02.226088",
  "modified_by": "Administrator",
