@@ -53,7 +53,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'fax' : biller_address.get('fax', ""),
             'gln_number': practitioner_gln_number,
             'zsr_number' : practitioner_zsr_number,
-            #'tax_id' : biller_details.tax_id,
+            'tax_id' : biller_details.tax_id,
             'subaddressing' : biller_details.department
             }
 
