@@ -34,8 +34,20 @@ def get_data():
                    {
                        "type": "doctype",
                        "name": "Patient",
-                       "label": _("Patint"),
+                       "label": _("Patient"),
                        "description": _("Patient")
+                   }, 
+                   {
+                       "type": "doctype",
+                       "name": "Behandlungsgrund",
+                       "label": _("Behandlungsgrund"),
+                       "description": _("Behandlungsgrund")
+                   }, 
+                   {
+                       "type": "doctype",
+                       "name": "Tarpoint Payment Type",
+                       "label": _("Tarpoint Payment Type"),
+                       "description": _("Tarpoint Payment Type")
                    }
             ]
         },
