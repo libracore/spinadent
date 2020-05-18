@@ -177,6 +177,13 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         'py_pr' : "Payment is due within {0} days from invoice date.".format(due_period)
         } 
       
+        
+        data['diagnosis_details'] = {
+            'reason' : doc.treatment_type,
+            'diagnosis' : doc.diagnosis
+        }
+    
+    
     
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/templateTest.html', data)
         return {'content': content}

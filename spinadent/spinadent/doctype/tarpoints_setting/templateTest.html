@@ -112,6 +112,14 @@
 
 <invoice:uvg case_id="" case_date="" ssn="{{patient.ahv_number}}"/>
 
+
+
+<invoice:treatment date_begin="" date_end="" canton="" reason="{{diagnosis_details.reason}}">
+    <invoice:diagnosis type="freetext">{{diagnosis_details.diagnosis}}</invoice:diagnosis>
+</invoice:treatment>
+
+
+
 <invoice:services> 
         {% for i in items.items_table %}
          <invoice:service record_id={{loop.index }} tariff_type="223" code={{i.item_code}} quantity={{i.qty}} provider_id={{biller.gln_number}} responsible_id={{biller.gln_number}} unit = "1" unit_factor="1" amount={{i.amount}} vat_rate="7.7" service_attributes="0" obligation="1" name={{i.item_name}} /> 
