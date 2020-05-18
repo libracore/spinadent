@@ -1,4 +1,5 @@
 {
+ "autoname": "field:company_name",
  "creation": "2020-03-10 18:15:00.039347",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -7,7 +8,7 @@
   "company_name",
   "street",
   "pincode",
-  "city", 
+  "city",
   "country",
   "gln_nummer"
  ],
@@ -15,7 +16,8 @@
   {
    "fieldname": "company_name",
    "fieldtype": "Data",
-   "label": "Company"
+   "label": "Company",
+   "unique": 1
   },
   {
    "fieldname": "street",
@@ -42,9 +44,9 @@
    "fieldname": "gln_nummer",
    "fieldtype": "Data",
    "label": "GLN Nummer"
-  }  
+  }
  ],
- "modified": "2020-03-26 15:10:02.226088",
+ "modified": "2020-05-18 21:55:13.490077",
  "modified_by": "Administrator",
  "module": "Spinadent",
  "name": "Insurance",
