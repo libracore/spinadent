@@ -101,10 +101,10 @@
         </invoice:person>
     </invoice:creditor>
 
-     <invoice:balance currency={{balance.currency}} amount={{balance.net_total}} amount_obligations={{balance.net_total}} amount_due={{balance.net_total}}> 
+     <invoice:balance currency="{{balance.currency}}" amount="{{balance.net_total}}" amount_obligations="{{balance.net_total}}" amount_due="{{balance.net_total}}"> 
             <invoice:vat vat="7.7"> 
-                <invoice:vat_rate vat="0.00" vat_rate="0" amount={{balance.taxless_total}}/> 
-                <invoice:vat_rate vat="7.7" vat_rate="7.7" amount3={{balance.total_taxes}}/>
+                <invoice:vat_rate vat="0.00" vat_rate="0" amount="{{balance.taxless_total}}"> 
+                <invoice:vat_rate vat="7.7" vat_rate="7.7" amount3="{{balance.total_taxes}}"/>
             </invoice:vat>
         </invoice:balance>
         
@@ -122,7 +122,7 @@
 
 <invoice:services> 
         {% for i in items.items_table %}
-         <invoice:service record_id={{loop.index }} tariff_type="223" code={{i.item_code}} quantity={{i.qty}} provider_id={{biller.gln_number}} responsible_id={{biller.gln_number}} unit = "1" unit_factor="1" amount={{i.amount}} vat_rate="7.7" service_attributes="0" obligation="1" name={{i.item_name}} /> 
+         <invoice:service record_id="{{loop.index }}" tariff_type="223" code="{{i.item_code}}" quantity="{{i.qty}}" provider_id="{{biller.gln_number}}" responsible_id="{{biller.gln_number}}" unit = "1" unit_factor="1" amount="{{i.amount}} vat_rate="7.7" service_attributes="0" obligation="1" name={{i.item_name}}" /> 
         {% endfor %}    
 </invoice:services>
 

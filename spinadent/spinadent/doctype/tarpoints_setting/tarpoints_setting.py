@@ -121,7 +121,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'country' : patient_details.country or "",
             'zip' : patient_details.pincode or "",
             'city' : patient_details.city or "",
-            'ahv_number' : patient_details.ahv_nummer or ""
+            'ahv_number' : patient_details.ahv_nr or ""
             }
             
         data['guarantor'] = {
