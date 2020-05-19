@@ -121,7 +121,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'country' : patient_details.country or "",
             'zip' : patient_details.pincode or "",
             'city' : patient_details.city or "",
-            'ahv_number' : patient_details.ahv_nummer or ""
+            'ahv_number' : patient_details.ahv_nr or ""
             }
             
         data['guarantor'] = {
@@ -177,6 +177,13 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         'py_pr' : "Payment is due within {0} days from invoice date.".format(due_period)
         } 
       
+        
+        data['diagnosis_details'] = {
+            'reason' : doc.treatment_type,
+            'diagnosis' : doc.diagnosis
+        }
+    
+    
     
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/templateTest.html', data)
         return {'content': content}
