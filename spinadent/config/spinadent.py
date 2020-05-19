@@ -77,7 +77,7 @@ def get_data():
                        "type": "doctype",
                        "name": "Delivery Note",
                        "label": _("Delivery Note"),
-                       "description": _("Delivvery Note")
+                       "description": _("Delivery Note")
                    }
             ]
         }
