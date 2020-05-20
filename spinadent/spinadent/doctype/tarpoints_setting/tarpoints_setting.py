@@ -110,6 +110,9 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             salutation = "Frau"
         else:
             salutation = "Herr"
+            
+            
+        
         
         data['patient'] = {
             'gender' : patient_details.sex or "",
@@ -121,7 +124,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'country' : patient_details.country or "",
             'zip' : patient_details.pincode or "",
             'city' : patient_details.city or "",
-            'ahv_number' : patient_details.ahv_nr or ""
+            'ahv_number' : patient_details.ahv_nr or "G999999"
             }
             
         data['guarantor'] = {
@@ -179,9 +182,17 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
       
         
         data['diagnosis_details'] = {
-            'reason' : doc.treatment_type,
-            'diagnosis' : doc.diagnosis
+            'reason' : doc.behandlungsgrund or "",
+            'diagnosis' : doc.diagnose or ""
         }
+        
+        
+        data['accident_details'] = {
+			'accident_date' : (doc.fall_unfalldatum).strftime("%Y-%m-%d") or "2020-01-01",
+			'accident_id' : doc.fall_nr_versicherung_ or "G999999"
+        }
+    
+   
     
     
     
