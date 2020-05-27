@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<invoice:tiers_payant payment_period="{{payment_period.py_pr}}">
 
+<invoice:request xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:invoice="http://www.forum-datenaustausch.ch/invoice" xsi:schemaLocation="http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_450.xsd" xmlns="http://www.forum-datenaustausch.ch/invoice" language="de" modus="production" validation_status="0">
+    
+    <invoice:processing>
+        <invoice:transport from="{{biller.gln_number}}" to="{{insurance.gln_nr}}">
+            <invoice:via via="G999999" sequence_id="1"/>
+        </invoice:transport>
+    </invoice:processing>
+    <invoice:payload type="invoice" copy="0" storno="0">
+        <invoice:invoice request_timestamp="0000000000" request_date="{{invoice.details}}" request_id="123456.789"/>
+            <invoice:body role="{{provider.role}}" place="{{provider.designation}}">
+                <invoice:prolog>
+                    <invoice:package name="GeneralInvoiceRequestTest" copyright="suva 2000-17" version="100015"/>
+                    <invoice:generator name="GeneralInvoiceRequestManager 4.50.002" copyright="suva 2000-17" version="450"><invoice:depends_on name="miscValidator ATL Module" copyright="Suva" version="200" id="1002090101"/>
+                    </invoice:generator>
+                </invoice:prolog>
+                
+<invoice:remark>1. Fertigung: Schweiz 2. Beilagen: Lieferschein(e) inkl. der Konformitätserklärung(en) MepV</invoice:remark>
+
+<invoice:tiers_payant payment_period="{{payment_period.py_pr}}">
+	
     <invoice:biller ean_party="{{biller.gln_number}}" zsr="{{biller.zsr_number}}" uid_number="{{biller.tax_id}}"> 
         <invoice:person title="{{biller.designation}}">
             <invoice:familyname>{{biller.family_name}}</invoice:familyname>
@@ -127,6 +146,12 @@
 </invoice:services>
 
 
+<invoice:base64></invoice:base64>
+</invoice:document>
+</invoice:documents>
+</invoice:body>
+</invoice:payload>
+</invoice:request>
 
 
 

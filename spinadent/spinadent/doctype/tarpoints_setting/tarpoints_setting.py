@@ -13,18 +13,19 @@ import re
     
 @frappe.whitelist()
 def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
+	
         if dn:
             doc = frappe.get_doc('Delivery Note', dn)
         elif so:
             doc=frappe.get_doc('Sales Order', so)
         elif sinv:
-            doc=frappe.get_doc('Sales Invoice', sinv) 
+            doc=frappe.get_doc('Sales Invoice', sinv)            
         elif qtn:
-            doc=frappe.get_doc('Quotation', qtn) 
+            doc=frappe.get_doc('Quotation', qtn)            
         else:
             frappe.throw("Please provide an argument")
             
-        data = {}
+        data = {}	
         data['xml_version'] = frappe.get_value("ERPNextSwiss Settings", "ERPNextSwiss Settings", "xml_version")
         data['xml_region'] = frappe.get_value("ERPNextSwiss Settings", "ERPNextSwiss Settings", "banking_region")
         data['date'] = time.strftime("%Y-%m-%dT%H:%M:%S") 
@@ -88,7 +89,9 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
             'fax' : provider_address.get('fax', ""),
             'gln_number': practitioner_gln_number or "",
             'zsr_number' : provider_details.zsr_number or "",
-            'subaddressing' : provider_details.department or ""
+            'subaddressing' : provider_details.department or "",
+            'role' : provider_details.department or "",
+            'place' : provider_details.designation or ""
             }    
             
         data['insurance'] = {
@@ -191,6 +194,29 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
 			'accident_date' : (doc.fall_unfalldatum).strftime("%Y-%m-%d") or "2020-01-01",
 			'accident_id' : doc.fall_nr_versicherung_ or "G999999"
         }
+    
+    
+        if dn:
+            data['invoice'] = {
+				'details' : (doc.transaction_date).strftime("%Y-%m-%d") or "2020-01-01",
+			}
+        elif so:
+            data['invoice'] = {
+				'details' : (doc.transaction_date).strftime("%Y-%m-%d") or "2020-01-01",
+			}
+        elif sinv:
+            data['invoice'] = {
+				'details' : (doc.posting_date).strftime("%Y-%m-%d") or "2020-01-01",
+			}             
+        elif qtn:
+            data['invoice'] = {
+				'details' : (doc.transaction_date).strftime("%Y-%m-%d") or "2020-01-01",
+			}            
+        else:
+            data['invoice'] = {
+				'details' : "2020-01-01",
+			} 
+    
     
    
     
