@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 
+
 <invoice:request xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:invoice="http://www.forum-datenaustausch.ch/invoice" xsi:schemaLocation="http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_450.xsd" xmlns="http://www.forum-datenaustausch.ch/invoice" language="de" modus="production" validation_status="0">
     
+
+  
     <invoice:processing>
         <invoice:transport from="{{biller.gln_number}}" to="{{insurance.gln_nr}}">
             <invoice:via via="G999999" sequence_id="1"/>
@@ -39,7 +42,6 @@
     </invoice:biller>
 
     <invoice:debitor ean_party="{{insurance.gln_nr}}"> 
-    <invoice:debitor>
         <invoice:company>
             <invoice:companyname>{{debitor.company}}</invoice:companyname>
             <invoice:postal>
@@ -122,7 +124,7 @@
 
      <invoice:balance currency="{{balance.currency}}" amount="{{balance.net_total}}" amount_obligations="{{balance.net_total}}" amount_due="{{balance.net_total}}"> 
             <invoice:vat vat="7.7"> 
-                <invoice:vat_rate vat="0.00" vat_rate="0" amount="{{balance.taxless_total}}"> 
+                <invoice:vat_rate vat="0.00" vat_rate="0" amount="{{balance.taxless_total}}"/> 
                 <invoice:vat_rate vat="7.7" vat_rate="7.7" amount3="{{balance.total_taxes}}"/>
             </invoice:vat>
         </invoice:balance>
@@ -141,11 +143,11 @@
 
 <invoice:services> 
         {% for i in items.items_table %}
-         <invoice:service record_id="{{loop.index }}" tariff_type="223" code="{{i.item_code}}" quantity="{{i.qty}}" provider_id="{{biller.gln_number}}" responsible_id="{{biller.gln_number}}" unit = "1" unit_factor="1" amount="{{i.amount}} vat_rate="7.7" service_attributes="0" obligation="1" name={{i.item_name}}" /> 
+         <invoice:service record_id="{{loop.index }}" tariff_type="223" code="{{i.item_code}}" quantity="{{i.qty}}" provider_id="{{biller.gln_number}}" responsible_id="{{biller.gln_number}}" unit = "1" unit_factor="1" amount="{{i.amount}}" vat_rate="7.7" service_attributes="0" obligation="1" name="{{i.item_name}}" /> 
         {% endfor %}    
 </invoice:services>
 
-
+<invoice:documents number="1"><invoice:document filename="{{title.doc_title}}" mimeType="application/pdf" title="{{title.doc_title}}">
 <invoice:base64></invoice:base64>
 </invoice:document>
 </invoice:documents>

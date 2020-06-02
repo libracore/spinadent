@@ -194,7 +194,10 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
 			'accident_date' : (doc.fall_unfalldatum).strftime("%Y-%m-%d") or "2020-01-01",
 			'accident_id' : doc.fall_nr_versicherung_ or "G999999"
         }
-    
+		
+        data['title'] = {
+            'doc_title' : doc.title
+        }
     
         if dn:
             data['invoice'] = {
