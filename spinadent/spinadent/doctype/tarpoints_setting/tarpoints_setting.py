@@ -234,10 +234,6 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
             schema_file = base_path + "/public/xsd/generalCreditRequest_430.xsd"
         else:
             schema_file = base_path + "/public/xsd/generalCreditRequest_430.xsd"
-        #xmlschema_doc = etree.parse(schema)
-        #xmlschema = etree.XMLSchema(xmlschema_doc)
-        #xml_root = etree.parse(StringIO(content))
-        #xml_root = etree.parse(bytes(bytearray(content, encoding='utf-8')))
         
         xsd_root = etree.parse(schema_file)
         xmlschema = etree.XMLSchema(xsd_root)
