@@ -9,94 +9,59 @@ from frappe.model.document import Document
 from datetime import datetime, timedelta
 import time
 from erpnextswiss.erpnextswiss.common_functions import get_building_number, get_street_name, get_pincode, get_city, get_primary_address
-import cgi
-import re
-    
+import cgi              # for string escaping
+import re               # to convert tax_ids  
+from lxml import etree  # for xml validation
+from io import StringIO
+
 @frappe.whitelist()
-def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
+def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
 	# load original document
     if dn:
         doc = frappe.get_doc('Delivery Note', dn)
+        date = doc.transaction_date
+        customer = frappe.get_doc("Customer", doc.customer)
+        customer_address = frappe.get_doc("Address", doc.customer_address)
     elif so:
         doc=frappe.get_doc('Sales Order', so)
+        date = doc.transaction_date
+        customer = frappe.get_doc("Customer", doc.customer)
+        customer_address = frappe.get_doc("Address", doc.customer_address)
     elif sinv:
-        doc=frappe.get_doc('Sales Invoice', sinv)            
+        doc=frappe.get_doc('Sales Invoice', sinv)  
+        date = doc.posting_date
+        customer = frappe.get_doc("Customer", doc.customer)
+        customer_address = frappe.get_doc("Address", doc.customer_address)  
     elif qtn:
-        doc=frappe.get_doc('Quotation', qtn)            
+        doc=frappe.get_doc('Quotation', qtn)  
+        date = doc.transaction_date    
+        customer = frappe.get_doc("Customer", doc.party_name) 
+        customer_address = frappe.get_doc("Address", doc.customer_address)     
     else:
         frappe.throw("Please provide an argument")
-    
-    # create data record
-    data = {}	
-    data['date'] = time.strftime("%Y-%m-%dT%H:%M:%S") 
-  
+
+    # collect information
     biller_details = frappe.get_doc('Company', doc.company)
     biller_address = get_primary_address(target_name=doc.company, target_type="Company")
     if not biller_address:
         frappe.throw( _("Please define an address for Company {0}").format(doc.company))
-        
-    data['biller'] = {
-        'designation' : "",
-        'family_name' : doc.company,
-        'given_name' : "", 
-        'street' : biller_address.get('address_line1', ''),
-        'statecode' : None, #biller_address.get('county', 'SG')[:2].upper(),
-        'zip' : biller_address.get('pincode', '9000'),
-        'city' : biller_address.get('city', 'Berschis'),
-        'phone' : biller_details.phone_no or "",
-        'fax' : "",
-        'gln_number': biller_details.gln_number or "2000000000000",
-        'zsr_number' : biller_details.zsr_number or "G999999",
-        'tax_id' : biller_details.tax_id or "",
-        'subaddressing' : ""
-        }
 
+    if not doc.patient:
+        frappe.throw( _("Please define an patient for Quotation {0}").format(doc.name))
     debitor_details = frappe.get_doc('Patient', doc.patient)
+    if not debitor_details.insurance:
+        frappe.throw( _("Please define an insurance for Patient {0}").format(doc.patient))
     insurance = frappe.get_doc('Insurance', debitor_details.insurance)
-    
-    if insurance.gln_nummer:
-        insurance_gln_number = insurance.gln_nummer
-    else: 
-        insurance_gln_number = "G999999"
-    
-    data['debitor'] = {
-        'company' : insurance.company_name or "",
-        'street' : insurance.street or "",
-        'zip' : insurance.pincode or "", 
-        'city' : insurance.city or "",
-        'gln_nr' : insurance_gln_number or ""
-        }
-        
+
     provider_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
     provider_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
     if not provider_address:
         frappe.throw( _("Please define an address for Healthcare Practitioner {0}").format(doc.ref_practitioner))
-        
-    data['provider'] = {
-        'designation' : provider_details.designation or "",
-        'family_name' : provider_details.first_name or "",
-        'given_name' : provider_details.last_name or "",
-        'street' : provider_address.get('address_line1', ""),
-        'statecode' : None, #provider_address.get('county', "SG")[:2].upper(),
-        'zip' : provider_address.get('pincode', ""),
-        'city' : provider_address.get('city', ""),
-        'phone' : provider_details.mobile_phone or "",
-        'fax' : provider_address.get('fax', ""),
-        'gln_number': provider_details.gln_number or "2000000000000",
-        'zsr_number' : provider_details.zsr_number or "G999999",
-        'subaddressing' : provider_details.department or "",
-        'role' : provider_details.department or "",
-        'place' : provider_details.designation or ""
-        }    
-        
-    data['insurance'] = {
-        'company' : insurance.company_name or "",
-        'street' : insurance.street or "",
-        'zip' : insurance.pincode or "", 
-        'city' : insurance.city or "",
-        'gln_nr' : insurance.gln_nummer or ""
-        }
-        
+    if not provider_details.office_phone:
+        frappe.throw( _("Please define an office phone number for Healthcare Practitioner {0}").format(doc.ref_practitioner))
+    
+    if not customer_address.phone:
+        frappe.throw( _("Please define a phone number for Address {0}").format(customer_address.name))
     patient_details = frappe.get_doc('Patient', doc.patient)
     patient_address = get_primary_address(target_name=doc.patient, target_type="Patient")
     
@@ -108,60 +73,17 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         salutation = "Frau"
     else:
         salutation = "Herr"
-        
-    data['patient'] = {
-        'gender' : patient_details.sex or "",
-        'birthdate' : patient_details.dob or "",
-        'salutation' : salutation,
-        'family_name' : last_name,
-        'given_name' : first_name,
-        'street' : patient_details.street or "",
-        'country' : patient_details.country or "",
-        'zip' : patient_details.pincode or "",
-        'city' : patient_details.city or "",
-        'ahv_number' : patient_details.ahv_nr or "G999999"
-        }
-        
-    data['guarantor'] = {
-        'salutation' : salutation,
-        'family_name' : last_name,
-        'given_name' : first_name,
-        'street' : patient_details.street or "",
-        'zip' : patient_details.pincode or "",
-        'city' : patient_details.city or "",
-        }
-        
+
     tax_id_toInt = ""  
     if doc.tax_id: 
         t_id = doc.tax_id
         tax_id_toInt = re.sub("[^0-9]", "", t_id)
   
     taxless_amount = (doc.net_total) - (doc.total_taxes_and_charges)
-   
-    data['balance'] = {
-        'currency' : doc.currency or "",
-        'net_total' : doc.net_total or "",
-        'tax_id' : tax_id_toInt,
-        'taxless_total' : taxless_amount, 
-        'total_taxes' : doc.total_taxes_and_charges or ""
-        } 
-          
+
     creditor_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
     creditor_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
-    data['creditor'] = {
-        'designation' : creditor_details.designation or "",
-        'family_name' : creditor_details.first_name or "",
-        'given_name' : creditor_details.last_name or "",
-        'street' : creditor_address['address_line1'],
-        'country_code' : creditor_address['country_code'], 
-        'zip' : creditor_address['pincode'],
-        'city' : creditor_address['city']
-        }
-      
-    data['items'] = {
-    'items_table' : doc.items
-    }
-
+    
     if doc.payment_terms_template:
         payment_terms_template = frappe.get_doc("Payment Terms Template", doc.payment_terms_template)
         if payment_terms_template:
@@ -169,54 +91,163 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None):
         else:
             due_period = 30
     else:
-        due_period = 30
-    
-    data['payment_period'] ={
-    'py_pr' : "Payment is due within {0} days from invoice date.".format(due_period)
-    } 
-  
-    
-    data['diagnosis_details'] = {
-        'reason' : doc.behandlungsgrund or "",
-        'diagnosis' : doc.diagnose or ""
-    }
-    
-    
-    data['accident_details'] = {
-        'accident_date' : (doc.fall_unfalldatum).strftime("%Y-%m-%d") or "2020-01-01",
-        'accident_id' : doc.fall_nr_versicherung_ or "G999999"
-    }
-    
-    data['title'] = {
-        'doc_title' : doc.title
-    }
+        due_period = 30       
 
-    if dn:
-        data['invoice'] = {
-            'details' : (doc.transaction_date).strftime("%Y-%m-%d") or "2020-01-01",
-        }
-    elif so:
-        data['invoice'] = {
-            'details' : (doc.transaction_date).strftime("%Y-%m-%d") or "2020-01-01",
-        }
-    elif sinv:
-        data['invoice'] = {
-            'details' : (doc.posting_date).strftime("%Y-%m-%d") or "2020-01-01",
-        }             
-    elif qtn:
-        data['invoice'] = {
-            'details' : (doc.transaction_date).strftime("%Y-%m-%d") or "2020-01-01",
-        }            
+    if patient_details.ahv_nr:
+        patient_ahv_nr = re.sub("[^0-9]", "", patient_details.ahv_nr)
     else:
-        data['invoice'] = {
-            'details' : "2020-01-01",
-        } 
+        frappe.throw( _("Please define an AHV number for Patient {0}").format(doc.patient))
+    if patient_details.dob:
+        patient_dob = patient_details.dob.strftime("%Y-%m-%dT%H:%M:%S") or ""
+    else:
+        frappe.throw( _("Please define a birth date for Patient {0}").format(doc.patient))
+
+    # create data record
+    data = {
+        'date': date.strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00",
+        'timestamp': int(time.time()),
+        'name': doc.name,
+        'title': doc.title,
+        'payment_period': "Payment is due within {0} days from invoice date.".format(due_period),
+        'remark': doc.terms or "Keine Anmerkungen",
+        'place': biller_details.tarpoint_place,
+        'role': biller_details.tarpoint_role,
+        'customer': {
+            'title' : customer.name,
+            'family_name' : customer.customer_name,
+            'given_name' : "-", 
+            'street' : customer_address.get('address_line1', ''),
+            'statecode' : None, #biller_address.get('county', 'SG')[:2].upper(),
+            'zip' : customer_address.get('pincode', '9000'),
+            'city' : customer_address.get('city', 'Berschis'),
+            'phone' : customer_address.phone,
+            'fax' : None,
+            'url': customer.website,
+            'email': customer.email_id,
+            'gln_number': customer.gln_number or "2000000000000",
+            'zsr_number' : provider_details.zsr_number or "G999999"
+        },
+        'biller': {
+            'designation' : "",
+            'family_name' : doc.company,
+            'given_name' : "-", 
+            'street' : biller_address.get('address_line1', ''),
+            'statecode' : None, #biller_address.get('county', 'SG')[:2].upper(),
+            'zip' : biller_address.get('pincode', '9000'),
+            'city' : biller_address.get('city', 'Berschis'),
+            'phone' : biller_details.phone_no or "",
+            'fax' : "",
+            'gln_number': biller_details.gln_number or "2000000000000",
+            'zsr_number' : biller_details.zsr_number or "G999999",
+            'tax_id' : biller_details.tax_id or "",
+            'subaddressing' : ""
+        },
+        'debitor': {
+            'company' : insurance.company_name or "",
+            'street' : insurance.street or "",
+            'zip' : insurance.pincode or "", 
+            'city' : insurance.city or "",
+            'gln_nr' : insurance.gln_nummer or "2000000000000"
+        },
+        'provider': {
+            'title': provider_details.name[:35],
+            'designation' : provider_details.designation or "",
+            'family_name' : provider_details.first_name or "",
+            'given_name' : provider_details.last_name or "",
+            'street' : provider_address.get('address_line1', ""),
+            'statecode' : None, #provider_address.get('county', "SG")[:2].upper(),
+            'zip' : provider_address.get('pincode', ""),
+            'city' : provider_address.get('city', ""),
+            'phone' : provider_details.office_phone or "",
+            'fax' : provider_address.get('fax', None),
+            'gln_number': provider_details.gln_number or "2000000000000",
+            'zsr_number' : provider_details.zsr_number or "G999999",
+            'subaddressing' : provider_details.department or ""
+        }, 
+        'insurance': {
+            'company' : insurance.company_name or "",
+            'street' : insurance.street or "",
+            'zip' : insurance.pincode or "", 
+            'city' : insurance.city or "",
+            'gln_nr' : insurance.gln_nummer or "2000000000000"
+        },
+        'patient': {
+            'gender' : patient_details.sex.lower() if patient_details.sex else "female",
+            'birthdate' : patient_dob,
+            'salutation' : salutation,
+            'family_name' : last_name,
+            'given_name' : first_name,
+            'street' : patient_details.street or "",
+            'country' : patient_details.country or "",
+            'zip' : patient_details.pincode or "",
+            'city' : patient_details.city or "",
+            'ahv_number' : patient_ahv_nr
+        },
+        'guarantor': {
+            'salutation' : salutation,
+            'family_name' : last_name,
+            'given_name' : first_name,
+            'street' : patient_details.street or "",
+            'zip' : patient_details.pincode or "",
+            'city' : patient_details.city or "",
+        },
+        'items': doc.items,
+        'balance': {
+            'currency' : doc.currency or "",
+            'net_total' : doc.net_total or "",
+            'tax_id' : tax_id_toInt,
+            'taxless_total' : taxless_amount, 
+            'total_taxes' : doc.total_taxes_and_charges or ""
+        },
+        'creditor': {
+            'designation' : creditor_details.designation or "",
+            'family_name' : creditor_details.first_name or "",
+            'given_name' : creditor_details.last_name or "",
+            'street' : creditor_address['address_line1'],
+            'country_code' : creditor_address['country_code'], 
+            'zip' : creditor_address['pincode'],
+            'city' : creditor_address['city']
+        },
+        'treatment': {
+            'reason' : doc.behandlungsgrund or "",
+            'diagnosis' : doc.diagnose or "",
+            'canton': doc.behandlungskanton or "",
+            'begin_date': doc.beginn_behandlung.strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00"
+        },
+        'accident_details': {
+            'accident_date' : (doc.fall_unfalldatum).strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00",
+            'accident_id' : doc.fall_nr_versicherung_ or "G999999"
+        }
+    }
 
     # render data into template
     if qtn:
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/quotation.html', data)
     else:
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/invoice.html', data)
+    
+    # validate xml content
+    if validate:
+        # load schema
+        base_path = frappe.get_app_path("spinadent")
+        if qtn:
+            schema_file = base_path + "/public/xsd/generalCreditRequest_430.xsd"
+        else:
+            schema_file = base_path + "/public/xsd/generalCreditRequest_430.xsd"
+        #xmlschema_doc = etree.parse(schema)
+        #xmlschema = etree.XMLSchema(xmlschema_doc)
+        #xml_root = etree.parse(StringIO(content))
+        #xml_root = etree.parse(bytes(bytearray(content, encoding='utf-8')))
+        
+        xsd_root = etree.parse(schema_file)
+        xmlschema = etree.XMLSchema(xsd_root)
+        
+        # parse content
+        xml_root = etree.fromstring(content.encode('utf-8'))
+        # validate
+        if not xmlschema.validate(xml_root):
+            frappe.throw( _("Failed to validate content: {0}").format(xmlschema.error_log.last_error))
+    
     # return xml content
     return {'content': content}
  
