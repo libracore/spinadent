@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<credit:request xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:credit="http://www.forum-datenaustausch.ch/credit" xsi:schemaLocation="http://www.forum-datenaustausch.ch/credit generalCreditRequest_430.xsd" xmlns="http://www.forum-datenaustausch.ch/credit" language="de" modus="production" validation_status="0">
+    <credit:processing>
+        <credit:transport from="{{biller.gln_number}}" to="{{insurance.gln_nr}}">
+            <credit:via via="G999999" sequence_id="1"/>
+        </credit:transport>
+    </credit:processing>
+    <credit:payload type="invoice" copy="0" storno="0">
+        <credit:invoice request_timestamp="0000000000" request_date="{{invoice.details}}" request_id="123456.789"/>
+        <credit:body role="{{provider.role}}" place="{{provider.designation}}">
+            <credit:prolog>
+                <credit:package name="GeneralInvoiceRequestTest" copyright="suva 2000-17" version="100015"/>
+                <credit:generator name="GeneralInvoiceRequestManager 4.50.002" copyright="suva 2000-17" version="450"><credit:depends_on name="miscValidator ATL Module" copyright="Suva" version="200" id="1002090101"/>
+                </credit:generator>
+            </credit:prolog>                
+            <credit:remark>1. Fertigung: Schweiz 2. Beilagen: Lieferschein(e) inkl. der Konformitätserklärung(en) MepV</credit:remark>
+            <credit:tiers_payant payment_period="{{payment_period.py_pr}}">
+                <credit:biller ean_party="{{biller.gln_number}}" zsr="{{biller.zsr_number}}" uid_number="{{biller.tax_id}}"> 
+                    <credit:person title="{{biller.designation}}">
+                        <credit:familyname>{{biller.family_name}}</credit:familyname>
+                        <credit:givenname>{{biller.given_name}}</credit:givenname>
+                        <credit:subaddressing>{{biller.subaddressing}}</credit:subaddressing>  
+                        <credit:postal>
+                            <credit:street>{{biller.street}}</credit:street>
+                            <credit:zip{% if provider.statecode %} statecode="{{biller.statecode}}"{% endif %}>{{biller.zip}}</credit:zip>
+                            <credit:city>{{biller.city}}</credit:city>
+                        </credit:postal> 
+                        <credit:telecom>
+                            <credit:phone>{{biller.phone}}</credit:phone>
+                            <credit:fax>{{biller.fax}}</credit:fax>
+                        </credit:telecom>
+                    </credit:person>
+                </credit:biller>
+                <credit:debitor ean_party="{{insurance.gln_nr}}"> 
+                    <credit:company>
+                        <credit:companyname>{{debitor.company}}</credit:companyname>
+                        <credit:postal>
+                            <credit:street>{{debitor.street}}</credit:street>
+                            <credit:zip>{{debitor.zip}}</credit:zip>
+                            <credit:city>{{debitor.city}}</credit:city>
+                        </credit:postal>
+                    </credit:company>
+                </credit:debitor>
+                <credit:provider ean_party="{{biller.gln_number}}" zsr="{{biller.zsr_number}}">
+                    <credit:person title="{{provider.designation}}"> 
+                        <credit:familyname>{{provider.family_name}}</credit:familyname>
+                        <credit:givenname>{{provider.given_name}}</credit:givenname>
+                        <credit:subaddressing>{{provider.subaddressing}}</credit:subaddressing>
+                        <credit:postal>
+                            <credit:street>{{provider.street}}</credit:street>
+                            <credit:zip{% if provider.statecode %} statecode ="{{provider.statecode}}"{% endif %}>{{provider.zip}}</credit:zip>
+                            <credit:city>{{provider.city}}</credit:city>
+                        </credit:postal>
+                        <credit:telecom>
+                            <credit:phone>{{provider.phone}}</credit:phone>
+                            <credit:fax>{{provider.fax}}</credit:fax>
+                        </credit:telecom>  
+                    </credit:person>
+                </credit:provider>
+                <credit:insurance ean_party="{{insurance.gln_nr}}"> 
+                    <credit:company>
+                        <credit:companyname>{{insurance.company}}</credit:companyname>
+                        <credit:postal>
+                            <credit:street>{{insurance.street}}</credit:street>
+                            <credit:zip>{{insurance.zip}}</credit:zip>
+                            <credit:city>{{insurance.city}}</credit:city>
+                        </credit:postal>
+                    </credit:company>
+                </credit:insurance>
+                <credit:patient gender="{{patient.gender}}" birthdate="{{patient.birthdate}}" ssn="{{patient.ahv_number}}">
+                    <credit:person salutation="{{patient.salutation}}">
+                        <credit:familyname>{{patient.family_name}}</credit:familyname>
+                        <credit:givenname>{{patient.given_name}}</credit:givenname>
+                        <credit:postal>
+                            <credit:street>{{patient.street}}</credit:street>
+                            <credit:country>{{patient.country}}</credit:country>
+                            <credit:zip>{{patient.zip}}</credit:zip>
+                            <credit:city>{{patient.city}}</credit:city>
+                        </credit:postal>
+                    </credit:person>
+                </credit:patient>
+                <credit:guarantor>
+                    <credit:person salutation="{{guarantor.salutation}}">
+                        <credit:familyname>{{guarantor.family_name}}</credit:familyname>
+                        <credit:givenname>{{guarantor.given_name}}</credit:givenname>
+                        <credit:postal>
+                            <credit:street>{{guarantor.street}} 5</credit:street>
+                            <credit:zip>{{guarantor.zip}}</credit:zip>
+                            <credit:city>{{guarantor.city}}</credit:city>
+                        </credit:postal>
+                    </credit:person>
+                </credit:guarantor>
+            </credit:tiers_payant>
+            <credit:esr9>
+                <credit:creditor>
+                    <credit:person title="{{creditor.designation}}">
+                        <credit:familyname>{{creditor.family_name}}</credit:familyname>
+                        <credit:givenname>{{creditor.given_name}}</credit:givenname>
+                        <credit:postal>
+                            <credit:street>{{creditor.street}}</credit:street>
+                            <credit:zip countrycode="{{creditor.country_code}}">{{creditor.zip}}</credit:zip>
+                            <credit:city>{{creditor.city}}</credit:city>
+                        </credit:postal>
+                    </credit:person>
+                </credit:creditor>
+                <credit:balance currency="{{balance.currency}}" amount="{{balance.net_total}}" amount_obligations="{{balance.net_total}}" amount_due="{{balance.net_total}}"> 
+                    <credit:vat vat="7.7"> 
+                        <credit:vat_rate vat="0.00" vat_rate="0" amount="{{balance.taxless_total}}"/> 
+                        <credit:vat_rate vat="7.7" vat_rate="7.7" amount3="{{balance.total_taxes}}"/>
+                    </credit:vat>
+                </credit:balance>
+            </credit:esr9>
+            <credit:uvg case_id="{{accident_details.accident_id}}" case_date="{{accident_details.accident_date}}" ssn="{{patient.ahv_number}}"/>
+            <credit:treatment date_begin="" date_end="" canton="" reason="{{diagnosis_details.reason}}">
+                <credit:diagnosis type="freetext">{{diagnosis_details.diagnosis}}</credit:diagnosis>
+            </credit:treatment>
+            <credit:services> 
+                {% for i in items.items_table %}
+                    <credit:service record_id="{{loop.index }}" tariff_type="223" code="{{i.item_code}}" quantity="{{i.qty}}" provider_id="{{biller.gln_number}}" responsible_id="{{biller.gln_number}}" unit = "1" unit_factor="1" amount="{{i.amount}}" vat_rate="7.7" service_attributes="0" obligation="1" name="{{i.item_name}}" /> 
+                {% endfor %}    
+            </credit:services>
+            <credit:documents number="1">
+                <credit:document filename="{{title.doc_title}}" mimeType="application/pdf" title="{{title.doc_title}}">
+                </credit:document>
+            </credit:documents>
+        </credit:body>
+    </credit:payload>
+</credit:request>
+
+
+
+
+
+
+
+
+
+
+
+

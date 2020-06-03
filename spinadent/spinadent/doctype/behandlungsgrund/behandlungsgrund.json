@@ -25,15 +25,13 @@
    "read_only": 1
   }
  ],
- "is_submittable": 1,
- "modified": "2020-05-20 14:48:03.293379",
+ "modified": "2020-06-03 17:31:51.882333",
  "modified_by": "Administrator",
  "module": "Spinadent",
  "name": "Behandlungsgrund",
  "owner": "Administrator",
  "permissions": [
   {
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -43,11 +41,9 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -57,11 +53,9 @@
    "report": 1,
    "role": "Administrator",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -71,7 +65,6 @@
    "report": 1,
    "role": "Accounts Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
@@ -83,7 +76,6 @@
    "report": 1,
    "role": "Accounts User",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
