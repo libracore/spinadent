@@ -12,7 +12,7 @@ from erpnextswiss.erpnextswiss.common_functions import get_building_number, get_
 import cgi              # for string escaping
 import re               # to convert tax_ids  
 from lxml import etree  # for xml validation
-from io import StringIO
+from bs4 import BeautifulSoup	# to remove html tags
 
 @frappe.whitelist()
 def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
@@ -101,7 +101,11 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
         patient_dob = patient_details.dob.strftime("%Y-%m-%dT%H:%M:%S") or ""
     else:
         frappe.throw( _("Please define a birth date for Patient {0}").format(doc.patient))
-
+    if doc.terms:
+        remarks = BeautifulSoup(doc.terms, "lxml").text
+    else:
+        remarks = "Keine Anmerkungen"
+    
     # create data record
     data = {
         'date': date.strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00",
@@ -109,87 +113,87 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
         'name': doc.name,
         'title': doc.title,
         'payment_period': "Payment is due within {0} days from invoice date.".format(due_period),
-        'remark': doc.terms or "Keine Anmerkungen",
+        'remark': cgi.escape(remarks),
         'place': biller_details.tarpoint_place,
         'role': biller_details.tarpoint_role,
         'customer': {
-            'title' : customer.name,
-            'family_name' : customer.customer_name,
+            'title' : cgi.escape(customer.name),
+            'family_name' : cgi.escape(customer.customer_name),
             'given_name' : "-", 
-            'street' : customer_address.get('address_line1', ''),
+            'street' : cgi.escape(customer_address.get('address_line1', '')),
             'statecode' : None, #biller_address.get('county', 'SG')[:2].upper(),
-            'zip' : customer_address.get('pincode', '9000'),
-            'city' : customer_address.get('city', 'Berschis'),
-            'phone' : customer_address.phone,
+            'zip' : cgi.escape(customer_address.get('pincode', '9000')),
+            'city' : cgi.escape(customer_address.get('city', 'Berschis')),
+            'phone' : cgi.escape(customer_address.phone),
             'fax' : None,
-            'url': customer.website,
-            'email': customer.email_id,
-            'gln_number': customer.gln_number or "2000000000000",
-            'zsr_number' : provider_details.zsr_number or "G999999"
+            'url': cgi.escape(customer.website),
+            'email': cgi.escape(customer.email_id),
+            'gln_number': cgi.escape(customer.gln_number or "2000000000000"),
+            'zsr_number' : cgi.escape(provider_details.zsr_number or "G999999")
         },
         'biller': {
             'designation' : "",
-            'family_name' : doc.company,
+            'family_name' : cgi.escape(doc.company),
             'given_name' : "-", 
-            'street' : biller_address.get('address_line1', ''),
+            'street' : cgi.escape(biller_address.get('address_line1', '')),
             'statecode' : None, #biller_address.get('county', 'SG')[:2].upper(),
-            'zip' : biller_address.get('pincode', '9000'),
-            'city' : biller_address.get('city', 'Berschis'),
-            'phone' : biller_details.phone_no or "",
+            'zip' : cgi.escape(biller_address.get('pincode', '9000')),
+            'city' : cgi.escape(biller_address.get('city', 'Berschis')),
+            'phone' : cgi.escape(biller_details.phone_no or ""),
             'fax' : "",
-            'gln_number': biller_details.gln_number or "2000000000000",
-            'zsr_number' : biller_details.zsr_number or "G999999",
-            'tax_id' : biller_details.tax_id or "",
+            'gln_number': cgi.escape(biller_details.gln_number or "2000000000000"),
+            'zsr_number' : cgi.escape(biller_details.zsr_number or "G999999"),
+            'tax_id' : cgi.escape(biller_details.tax_id or ""),
             'subaddressing' : ""
         },
         'debitor': {
-            'company' : insurance.company_name or "",
-            'street' : insurance.street or "",
-            'zip' : insurance.pincode or "", 
-            'city' : insurance.city or "",
-            'gln_nr' : insurance.gln_nummer or "2000000000000"
+            'company' : cgi.escape(insurance.company_name or ""),
+            'street' : cgi.escape(insurance.street or ""),
+            'zip' : cgi.escape(insurance.pincode or ""), 
+            'city' : cgi.escape(insurance.city or ""),
+            'gln_nr' : cgi.escape(insurance.gln_nummer or "2000000000000")
         },
         'provider': {
-            'title': provider_details.name[:35],
-            'designation' : provider_details.designation or "",
-            'family_name' : provider_details.first_name or "",
-            'given_name' : provider_details.last_name or "",
-            'street' : provider_address.get('address_line1', ""),
+            'title': cgi.escape(provider_details.name[:35]),
+            'designation' : cgi.escape(provider_details.designation or ""),
+            'family_name' : cgi.escape(provider_details.first_name or ""),
+            'given_name' : cgi.escape(provider_details.last_name or ""),
+            'street' : cgi.escape(provider_address.get('address_line1', "")),
             'statecode' : None, #provider_address.get('county', "SG")[:2].upper(),
-            'zip' : provider_address.get('pincode', ""),
-            'city' : provider_address.get('city', ""),
-            'phone' : provider_details.office_phone or "",
+            'zip' : cgi.escape(provider_address.get('pincode', "")),
+            'city' : cgi.escape(provider_address.get('city', "")),
+            'phone' : cgi.escape(provider_details.office_phone or ""),
             'fax' : provider_address.get('fax', None),
-            'gln_number': provider_details.gln_number or "2000000000000",
-            'zsr_number' : provider_details.zsr_number or "G999999",
-            'subaddressing' : provider_details.department or ""
+            'gln_number': cgi.escape(provider_details.gln_number or "2000000000000"),
+            'zsr_number' : cgi.escape(provider_details.zsr_number or "G999999"),
+            'subaddressing' : cgi.escape(provider_details.department or "")
         }, 
         'insurance': {
-            'company' : insurance.company_name or "",
-            'street' : insurance.street or "",
-            'zip' : insurance.pincode or "", 
-            'city' : insurance.city or "",
-            'gln_nr' : insurance.gln_nummer or "2000000000000"
+            'company' : cgi.escape(insurance.company_name or ""),
+            'street' : cgi.escape(insurance.street or ""),
+            'zip' : cgi.escape(insurance.pincode or ""), 
+            'city' : cgi.escape(insurance.city or ""),
+            'gln_nr' : cgi.escape(insurance.gln_nummer or "2000000000000")
         },
         'patient': {
             'gender' : patient_details.sex.lower() if patient_details.sex else "female",
             'birthdate' : patient_dob,
             'salutation' : salutation,
-            'family_name' : last_name,
-            'given_name' : first_name,
-            'street' : patient_details.street or "",
-            'country' : patient_details.country or "",
-            'zip' : patient_details.pincode or "",
-            'city' : patient_details.city or "",
+            'family_name' : cgi.escape(last_name),
+            'given_name' : cgi.escape(first_name),
+            'street' : cgi.escape(patient_details.street or ""),
+            'country' : cgi.escape(patient_details.country or ""),
+            'zip' : cgi.escape(patient_details.pincode or ""),
+            'city' : cgi.escape(patient_details.city or ""),
             'ahv_number' : patient_ahv_nr
         },
         'guarantor': {
             'salutation' : salutation,
-            'family_name' : last_name,
-            'given_name' : first_name,
-            'street' : patient_details.street or "",
-            'zip' : patient_details.pincode or "",
-            'city' : patient_details.city or "",
+            'family_name' : cgi.escape(last_name),
+            'given_name' : cgi.escape(first_name),
+            'street' : cgi.escape(patient_details.street or ""),
+            'zip' : cgi.escape(patient_details.pincode or ""),
+            'city' : cgi.escape(patient_details.city or ""),
         },
         'items': doc.items,
         'balance': {
@@ -200,23 +204,23 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
             'total_taxes' : doc.total_taxes_and_charges or ""
         },
         'creditor': {
-            'designation' : creditor_details.designation or "",
-            'family_name' : creditor_details.first_name or "",
-            'given_name' : creditor_details.last_name or "",
-            'street' : creditor_address['address_line1'],
-            'country_code' : creditor_address['country_code'], 
-            'zip' : creditor_address['pincode'],
-            'city' : creditor_address['city']
+            'designation' : cgi.escape(creditor_details.designation or ""),
+            'family_name' : cgi.escape(creditor_details.first_name or ""),
+            'given_name' : cgi.escape(creditor_details.last_name or ""),
+            'street' : cgi.escape(creditor_address['address_line1']),
+            'country_code' : cgi.escape(creditor_address['country_code']), 
+            'zip' : cgi.escape(creditor_address['pincode']),
+            'city' : cgi.escape(creditor_address['city'])
         },
         'treatment': {
-            'reason' : doc.behandlungsgrund or "",
-            'diagnosis' : doc.diagnose or "",
+            'reason' : cgi.escape(doc.behandlungsgrund or ""),
+            'diagnosis' : cgi.escape(doc.diagnose or ""),
             'canton': doc.behandlungskanton or "",
             'begin_date': doc.beginn_behandlung.strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00"
         },
         'accident_details': {
             'accident_date' : (doc.fall_unfalldatum).strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00",
-            'accident_id' : doc.fall_nr_versicherung_ or "G999999"
+            'accident_id' : cgi.escape(doc.fall_nr_versicherung_ or "G999999")
         }
     }
 
