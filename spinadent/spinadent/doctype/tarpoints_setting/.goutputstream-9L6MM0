@@ -76,8 +76,6 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
     else:
         salutation = "Herr"
 
-    bank_details = frappe.get_doc('Tarpoint Bank', doc.bank)
-	
     tax_id_toInt = ""  
     if doc.tax_id: 
         t_id = doc.tax_id
@@ -110,9 +108,6 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
     else:
         remarks = "Keine Anmerkungen"
     
-    
-    
-    
     # create data record
     data = {
         'date': date.strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00",
@@ -139,7 +134,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
             'zsr_number' : cgi.escape(provider_details.zsr_number or "G999999")
         },
         'biller': {
-            'designation' : " ", #change
+            'designation' : "arzt", #change
             'family_name' : cgi.escape(doc.company),
             'given_name' : "-", 
             'street' : cgi.escape(biller_address.get('address_line1', '')),
@@ -147,11 +142,11 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
             'zip' : cgi.escape(biller_address.get('pincode', '9000')),
             'city' : cgi.escape(biller_address.get('city', 'Berschis')),
             'phone' : cgi.escape(biller_details.phone_no or ""),
-            'fax' : cgi.escape(biller_address.get('fax', '0000000000')),    
+            'fax' : "061 956 99 10",    #change
             'gln_number': cgi.escape(biller_details.gln_number or "2000000000000"),
             'zsr_number' : cgi.escape(biller_details.zsr_number or "G999999"),
             'tax_id' : cgi.escape(biller_details.tax_id or ""),
-            'subaddressing' : " " 
+            'subaddressing' : "c/o miter kars" #changge
         },
         'debitor': {
             'company' : cgi.escape(insurance.company_name or ""),
@@ -205,10 +200,10 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
         'items': doc.items,
         'balance': {
             'currency' : doc.currency or "",
-            'net_total' : doc.net_total or "",
+            'net_total' : float(doc.net_total) or "", #chnaaaaaaaaaaaaaaaaaaage
             'tax_id' : tax_id_toInt,
-            'taxless_total' : taxless_amount, 
-            'total_taxes' : doc.total_taxes_and_charges or ""
+            'taxless_total' : float(taxless_amount), 
+            'total_taxes' : float(doc.total_taxes_and_charges) or ""
         },
         'creditor': {
             'designation' : cgi.escape(creditor_details.designation or ""),
@@ -229,23 +224,7 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
         'accident_details': {
             'accident_date' : (doc.fall_unfalldatum).strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00",
             'accident_id' : cgi.escape(doc.fall_nr_versicherung_ or "G999999")
-        },
-        'bank': {
-			'post_account': bank_details.konto_nr,
-			'iban': bank_details.iban,
-			'coding_line1': bank_details.coding_line_1,
-			'coding_line2': bank_details.coding_line_2,
-			'bank_name': bank_details.company_name,
-			'department': bank_details.department,
-			'post_box': bank_details.post_box,
-			'street': bank_details.street,
-			'zip': bank_details.zip_code,
-			'city': bank_details.city,
-			'canton_code': bank_details.kanton,
-			'payment_to': bank_details.payment_type
-			
-			
-        },
+        }
     }
 
     # render data into template
