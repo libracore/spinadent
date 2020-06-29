@@ -1,168 +1,115 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-
-
-
 <invoice:request xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:invoice="http://www.forum-datenaustausch.ch/invoice" xsi:schemaLocation="http://www.forum-datenaustausch.ch/invoice generalInvoiceRequest_450.xsd" xmlns="http://www.forum-datenaustausch.ch/invoice" language="de" modus="production" validation_status="0">
-    
-
-  
     <invoice:processing>
         <invoice:transport from="{{biller.gln_number}}" to="{{insurance.gln_nr}}">
-            <invoice:via via="G999999" sequence_id="1"/>
+            <invoice:via via="{{customer.gln_number}}" sequence_id="1"/> 
         </invoice:transport>
     </invoice:processing>
     <invoice:payload type="invoice" copy="0" storno="0">
-        <invoice:invoice request_timestamp="0000000000" request_date="{{invoice.details}}" request_id="123456.789"/>
-            <invoice:body role="{{provider.role}}" place="{{provider.designation}}">
+        <invoice:invoice request_timestamp="{{timestamp}}" request_date="{{date}}" request_id="{{name}}"/>
+            <invoice:body role="{{role}}" place="{{place}}">
                 <invoice:prolog>
-                    <invoice:package name="GeneralInvoiceRequestTest" copyright="suva 2000-17" version="100015"/>
-                    <invoice:generator name="GeneralInvoiceRequestManager 4.50.002" copyright="suva 2000-17" version="450"><invoice:depends_on name="miscValidator ATL Module" copyright="Suva" version="200" id="1002090101"/>
-                    </invoice:generator>
-                </invoice:prolog>
-                
-<invoice:remark>1. Fertigung: Schweiz 2. Beilagen: Lieferschein(e) inkl. der Konformitätserklärung(en) MepV</invoice:remark>
-
-<invoice:tiers_payant payment_period="{{payment_period.py_pr}}">
-	
-    <invoice:biller ean_party="{{biller.gln_number}}" zsr="{{biller.zsr_number}}" uid_number="{{biller.tax_id}}"> 
-        <invoice:person title="{{biller.designation}}">
-            <invoice:familyname>{{biller.family_name}}</invoice:familyname>
-            <invoice:givenname>{{biller.given_name}}</invoice:givenname>
-            <invoice:subaddressing>{{biller.subaddressing}}</invoice:subaddressing>  
-            <invoice:postal>
-                <invoice:street>{{biller.street}}</invoice:street>
-                <invoice:zip statecode="{{biller.statecode}}">{{biller.zip}}</invoice:zip>
-                <invoice:city>{{biller.city}}</invoice:city>
-            </invoice:postal> 
-            <invoice:telecom>
-                <invoice:phone>{{biller.phone}}</invoice:phone>
-                <invoice:fax>{{biller.fax}}</invoice:fax>
-            </invoice:telecom>
-        </invoice:person>
-    </invoice:biller>
-
-    <invoice:debitor ean_party="{{insurance.gln_nr}}"> 
-        <invoice:company>
-            <invoice:companyname>{{debitor.company}}</invoice:companyname>
-            <invoice:postal>
-                <invoice:street>{{debitor.street}}</invoice:street>
-                <invoice:zip>{{debitor.zip}}</invoice:zip>
-                <invoice:city>{{debitor.city}}</invoice:city>
-            </invoice:postal>
-        </invoice:company>
-    </invoice:debitor>
-
-    <invoice:provider ean_party="{{biller.gln_number}}" zsr="{{biller.zsr_number}}">
-        <invoice:person title="{{provider.designation}}"> 
-            <invoice:familyname>{{provider.family_name}}</invoice:familyname>
-            <invoice:givenname>{{provider.given_name}}</invoice:givenname>
-            <invoice:subaddressing>{{provider.subaddressing}}</invoice:subaddressing>
-            <invoice:postal>
-                <invoice:street>{{provider.street}}</invoice:street>
-                <invoice:zip statecode ="{{provider.statecode}}">{{provider.zip}}</invoice:zip>
-                <invoice:city>{{provider.city}}</invoice:city>
-            </invoice:postal>
-            <invoice:telecom>
-                <invoice:phone>{{provider.phone}}</invoice:phone>
-                <invoice:fax>{{provider.fax}}</invoice:fax>
-            </invoice:telecom>  
-        </invoice:person>
-    </invoice:provider>
-
-    <invoice:insurance ean_party="{{insurance.gln_nr}}"> 
-        <invoice:company>
-            <invoice:companyname>{{insurance.company}}</invoice:companyname>
-            <invoice:postal>
-                <invoice:street>{{insurance.street}}</invoice:street>
-                <invoice:zip>{{insurance.zip}}</invoice:zip>
-                <invoice:city>{{insurance.city}}</invoice:city>
-            </invoice:postal>
-        </invoice:company>
-    </invoice:insurance>
-
-    <invoice:patient gender="{{patient.gender}}" birthdate="{{patient.birthdate}}" ssn="{{patient.ahv_number}}">
-        <invoice:person salutation="{{patient.salutation}}">
-            <invoice:familyname>{{patient.family_name}}</invoice:familyname>
-            <invoice:givenname>{{patient.given_name}}</invoice:givenname>
-            <invoice:postal>
-                <invoice:street>{{patient.street}}</invoice:street>
-                <invoice:country>{{patient.country}}</invoice:country>
-                <invoice:zip>{{patient.zip}}</invoice:zip>
-                <invoice:city>{{patient.city}}</invoice:city>
-            </invoice:postal>
-        </invoice:person>
-    </invoice:patient>
-
-    <invoice:guarantor>
-        <invoice:person salutation="{{guarantor.salutation}}">
-            <invoice:familyname>{{guarantor.family_name}}</invoice:familyname>
-            <invoice:givenname>{{guarantor.given_name}}</invoice:givenname>
-            <invoice:postal>
-                <invoice:street>{{guarantor.street}} 5</invoice:street>
-                <invoice:zip>{{guarantor.zip}}</invoice:zip>
-                <invoice:city>{{guarantor.city}}</invoice:city>
-            </invoice:postal>
-        </invoice:person>
-    </invoice:guarantor>
-
-</invoice:tiers_payant>
-
-
-<invoice:esr9>
-    
-    <invoice:creditor>
-        <invoice:person title="{{creditor.designation}}">
-            <invoice:familyname>{{creditor.family_name}}</invoice:familyname>
-            <invoice:givenname>{{creditor.given_name}}</invoice:givenname>
-            <invoice:postal>
-                <invoice:street>{{creditor.street}}</invoice:street>
-                <invoice:zip countrycode="{{creditor.country_code}}">{{creditor.zip}}</invoice:zip>
-                <invoice:city>{{creditor.city}}</invoice:city>
-            </invoice:postal>
-        </invoice:person>
-    </invoice:creditor>
-
-     <invoice:balance currency="{{balance.currency}}" amount="{{balance.net_total}}" amount_obligations="{{balance.net_total}}" amount_due="{{balance.net_total}}"> 
-            <invoice:vat vat="7.7"> 
-                <invoice:vat_rate vat="0.00" vat_rate="0" amount="{{balance.taxless_total}}"/> 
-                <invoice:vat_rate vat="7.7" vat_rate="7.7" amount3="{{balance.total_taxes}}"/>
-            </invoice:vat>
-        </invoice:balance>
-        
-</invoice:esr9>
-
-<invoice:uvg case_id="{{accident_details.accident_id}}" case_date="{{accident_details.accident_date}}" ssn="{{patient.ahv_number}}"/>
-
-
-
-<invoice:treatment date_begin="" date_end="" canton="" reason="{{diagnosis_details.reason}}">
-    <invoice:diagnosis type="freetext">{{diagnosis_details.diagnosis}}</invoice:diagnosis>
-</invoice:treatment>
-
-
-
-<invoice:services> 
-        {% for i in items.items_table %}
-         <invoice:service record_id="{{loop.index }}" tariff_type="223" code="{{i.item_code}}" quantity="{{i.qty}}" provider_id="{{biller.gln_number}}" responsible_id="{{biller.gln_number}}" unit = "1" unit_factor="1" amount="{{i.amount}}" vat_rate="7.7" service_attributes="0" obligation="1" name="{{i.item_name}}" /> 
-        {% endfor %}    
-</invoice:services>
-
-<invoice:documents number="1"><invoice:document filename="{{title.doc_title}}" mimeType="application/pdf" title="{{title.doc_title}}">
-<invoice:base64></invoice:base64>
-</invoice:document>
-</invoice:documents>
-</invoice:body>
-</invoice:payload>
-</invoice:request>
-
-
-
-
-
-
-
-
-
-
-
-
+                    <invoice:package name="spinadent" copyright="libracore AG" version="1"/>
+                    <invoice:generator name="libracore business software/ERPNext" copyright="libracore AG" version="12"><invoice:depends_on name="miscValidator ATL Module" copyright="Suva" version="200" id="1002090101"/>
+					</invoice:generator>
+                </invoice:prolog>               
+                <invoice:remark>{{ remark }}</invoice:remark> 
+				<invoice:balance currency="{{balance.currency}}" amount="{{balance.net_total}} " amount_obligations="{{balance.net_total}}" amount_due="{{balance.net_total}}"> 
+                    <invoice:vat vat="{{balance.total_taxes}}">
+                        {% for tax in vat -%}
+                        <invoice:vat_rate vat="{{ tax.tax_amount }}" vat_rate="{{ tax.rate }}" amount="{{balance.net_total}}"/> 
+                        {% endfor -%}
+                    </invoice:vat>
+                </invoice:balance> 
+            <invoice:esrRed payment_to="bank_account" iban="{{ bank.iban }}" reference_number="{{ reference }}" post_account="00-0000-0" coding_line1="000000000000000000000000000+ 070000000&gt;" coding_line2="000000000&gt;">             
+                <invoice:bank>
+                    <invoice:company>
+                        <invoice:companyname>{{bank.bank_name}}</invoice:companyname>
+                        {% if bank.department %}<invoice:department>{{bank.department}}</invoice:department>{% endif -%}
+                        <invoice:postal>
+                            {% if bank.post_box %}<invoice:pobox>{{bank.post_box}}</invoice:pobox>{% endif -%}
+                            <invoice:street>{{bank.street}}</invoice:street>
+                            <invoice:zip statecode="{{bank.canton_code}}">{{bank.zip}}</invoice:zip>
+                            <invoice:city>{{bank.city}}</invoice:city>
+                        </invoice:postal>
+                    </invoice:company>
+                </invoice:bank>
+            </invoice:esrRed>	
+           <invoice:tiers_payant >
+                <invoice:biller ean_party="{{biller.gln_number}}" zsr="{{biller.zsr_number}}" > 
+                    <invoice:person>
+                        <invoice:familyname>{{biller.family_name}}</invoice:familyname>
+                        <invoice:givenname>{{biller.given_name}}</invoice:givenname>
+                        {%- if biller.subaddressing %}<invoice:subaddressing>{{biller.subaddressing}}</invoice:subaddressing>{% endif %}
+                        <invoice:postal>
+                            <invoice:street>{{biller.street}}</invoice:street> 
+                            <invoice:zip statecode="{{biller.statecode}}">{{biller.zip}}</invoice:zip>
+                            <invoice:city>{{biller.city}}</invoice:city>
+                        </invoice:postal> 
+                        <invoice:telecom>
+                            <invoice:phone>{{biller.phone}}</invoice:phone>
+                            <invoice:fax>{{biller.fax}}</invoice:fax>
+                        </invoice:telecom>
+                    </invoice:person>
+                </invoice:biller>
+                <invoice:provider ean_party="{{biller.gln_number}}" zsr="{{biller.zsr_number}}">
+                    <invoice:person> 
+                        <invoice:familyname>{{provider.family_name}}</invoice:familyname>
+                        <invoice:givenname>{{provider.given_name}}</invoice:givenname>
+                        {% if provider.subaddressing %}<invoice:subaddressing>{{provider.subaddressing}}</invoice:subaddressing>{% endif %}
+                        <invoice:postal>
+                            <invoice:street>{{provider.street}}</invoice:street>
+                            <invoice:zip statecode ="{{provider.statecode}}">{{provider.zip}}</invoice:zip>
+                            <invoice:city>{{provider.city}}</invoice:city>
+                        </invoice:postal>
+                        <invoice:telecom>
+                            <invoice:phone>{{provider.phone}}</invoice:phone>
+                            <invoice:fax>{{provider.fax}}</invoice:fax>
+                        </invoice:telecom>  
+                    </invoice:person>
+                </invoice:provider>
+                <invoice:insurance ean_party="{{insurance.gln_nr}}"> 
+                    <invoice:company>
+                        <invoice:companyname>{{insurance.company}}</invoice:companyname>
+                        <invoice:postal>
+                            <invoice:street>{{insurance.street}}</invoice:street>
+                            <invoice:zip>{{insurance.zip}}</invoice:zip>
+                            <invoice:city>{{insurance.city}}</invoice:city>
+                        </invoice:postal>
+                    </invoice:company>
+                </invoice:insurance>
+                <invoice:patient gender="{{patient.gender}}" birthdate="{{patient.birthdate}}" ssn="{{patient.ahv_number}}">
+                    <invoice:person salutation="{{patient.salutation}}">
+                        <invoice:familyname>{{patient.family_name}}</invoice:familyname>
+                        <invoice:givenname>{{patient.given_name}}</invoice:givenname>
+                        <invoice:postal>
+                            <invoice:street>{{patient.street}}</invoice:street>
+                            <invoice:zip>{{patient.zip}}</invoice:zip>
+                            <invoice:city>{{patient.city}}</invoice:city>
+                        </invoice:postal>
+                    </invoice:person>
+                </invoice:patient>
+                <invoice:guarantor>
+                    <invoice:person salutation="{{guarantor.salutation}}">
+                        <invoice:familyname>{{guarantor.family_name}}</invoice:familyname>
+                        <invoice:givenname>{{guarantor.given_name}}</invoice:givenname>
+                        <invoice:postal>
+                            <invoice:street>{{guarantor.street}} 5</invoice:street>
+                            <invoice:zip>{{guarantor.zip}}</invoice:zip>
+                            <invoice:city>{{guarantor.city}}</invoice:city>
+                        </invoice:postal>
+                    </invoice:person>
+                </invoice:guarantor>
+                </invoice:tiers_payant>           
+				<invoice:uvg case_id="{{accident_details.accident_id}}" case_date="{{accident_details.accident_date}}" ssn="{{patient.ahv_number}}"/>
+				<invoice:treatment date_begin="{{treatment.begin_date}}" date_end="{{treatment.end_date}}" canton="{{treatment.canton}}" reason="{{treatment.reason}}">
+					<invoice:diagnosis type="freetext">{{treatment.diagnosis}}</invoice:diagnosis>
+				</invoice:treatment>
+				<invoice:services>
+					{% for i in items %}
+					<invoice:record_other record_id="{{loop.index }}"  code="{{i.item_code}}" name="{{i.item_name}}" session="1" quantity="{{i.qty}}" date_begin="{{date}}" provider_id="{{biller.gln_number}}" responsible_id="{{biller.gln_number}}" unit = "1" unit_factor="1.0" external_factor="1.0" amount="{{i.amount}}" tariff_type="223"/>  
+					{% endfor %}  
+				</invoice:services>
+			</invoice:body>
+		</invoice:payload>
+	</invoice:request>

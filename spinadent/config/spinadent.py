@@ -48,7 +48,13 @@ def get_data():
                        "name": "Tarpoint Payment Type",
                        "label": _("Tarpoint Payment Type"),
                        "description": _("Tarpoint Payment Type")
-                   }
+                   },
+                   {
+                       "type": "doctype",
+                       "name": "Tarpoint Bank",
+                       "label": _("Tarpoint Bank Connection"),
+                       "description": _("Tarpoint Bank Connection")
+                   }      
             ]
         },
          {

@@ -1,2 +1,15 @@
 Module: Spinadent,Customer Order Details,Kundenauftragsdetails
 Doctype: Sammelrechnung,Restrict to customer,Auf Kunden einschränken
+Module: Spinadent,Please define bank details,Bitte geben Sie eine Bankverbindung an
+Module: Spinadent,Failed to validate content: {0},Inhalt konnte nicht validiert werden: {0}
+Module: Spinadent,Please define a birth date for Patient {0},Bitte geben Sie ein Geburtsdatum für Patint {0} ein
+Module: Spinadent,Please define an AHV number for Patient {0},Bitte geben Sie eine AHV-Nummer für Patient {0} ein
+Module: Spinadent,Please define a phone number for Address {0},Bitte erfassen Sie zu der Adresse {0} eine Telefonnummer
+Module: Spinadent,Please define an office phone number for Healthcare Practitioner {0},Bitte erfassen Sie eine Telefonnummer für den Arzt {0}
+Module: Spinadent,Please define an address for Healthcare Practitioner {0},Bitte erfassen Sie eine Adresse für den Arzt {0}
+Module: Spinadent,Please define an insurance for Patient {0},Bitte legen Sie die Versicherung für Patient {0} fest
+Module: Spinadent,Please define an patient for Quotation {0},Bitte wählen Sie einen Patienten für das Angebot {0}
+Module: Spinadent,Please define an address for Company {0},Bitte hinterlegen Sie eine Adresse für die Firma {0}
+Module: Spinadent,Please provide an argument,Bitte geben Sie Details ein
+Module: Spinadent,Please define a phone number for Company {0},Bitte geben Sie eine Telefonnummer für Firma {0} an
+Module: Spinadent,Bank {0} has no IBAN,Bank {0} hat keine IBAN

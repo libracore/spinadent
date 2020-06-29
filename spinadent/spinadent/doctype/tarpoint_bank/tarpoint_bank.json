@@ -1,0 +1,135 @@
+{
+ "autoname": "field:company_name",
+ "creation": "2020-06-26 11:45:46.566998",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "bank_details_section",
+  "konto_nr",
+  "iban",
+  "column_break1_column",
+  "address_section",
+  "company_name",
+  "department",
+  "post_box",
+  "kanton",
+  "column_break2_column",
+  "street",
+  "zip_code",
+  "city"
+ ],
+ "fields": [
+  {
+   "fieldname": "bank_details_section",
+   "fieldtype": "Section Break",
+   "label": "Bank details"
+  },
+  {
+   "fieldname": "konto_nr",
+   "fieldtype": "Data",
+   "label": "Konto Nr"
+  },
+  {
+   "fieldname": "iban",
+   "fieldtype": "Data",
+   "label": "IBAN"
+  },
+  {
+   "fieldname": "address_section",
+   "fieldtype": "Section Break",
+   "label": "Address"
+  },
+  {
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "label": "Bank Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Data",
+   "label": "Department"
+  },
+  {
+   "fieldname": "post_box",
+   "fieldtype": "Data",
+   "label": "Post box"
+  },
+  {
+   "fieldname": "street",
+   "fieldtype": "Data",
+   "label": "Street"
+  },
+  {
+   "fieldname": "zip_code",
+   "fieldtype": "Data",
+   "label": "Zip Code"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "column_break1_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break2_column",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Code eingeben (z.B. SG)",
+   "fieldname": "kanton",
+   "fieldtype": "Data",
+   "label": "Kanton"
+  }
+ ],
+ "modified": "2020-06-29 23:10:45.353308",
+ "modified_by": "Administrator",
+ "module": "Spinadent",
+ "name": "Tarpoint Bank",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
