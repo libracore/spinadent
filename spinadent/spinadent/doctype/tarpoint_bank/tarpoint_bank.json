@@ -9,19 +9,15 @@
   "konto_nr",
   "iban",
   "column_break1_column",
-  "coding_line_1",
-  "coding_line_2",
   "address_section",
   "company_name",
   "department",
   "post_box",
   "kanton",
-  "payment_type",
   "column_break2_column",
   "street",
   "zip_code",
-  "city",
-  "amended_from"
+  "city"
  ],
  "fields": [
   {
@@ -38,16 +34,6 @@
    "fieldname": "iban",
    "fieldtype": "Data",
    "label": "IBAN"
-  },
-  {
-   "fieldname": "coding_line_1",
-   "fieldtype": "Data",
-   "label": "Coding Line 1"
-  },
-  {
-   "fieldname": "coding_line_2",
-   "fieldtype": "Data",
-   "label": "Coding Line 2"
   },
   {
    "fieldname": "address_section",
@@ -86,15 +72,6 @@
    "label": "City"
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Tarpoint Bank",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
    "fieldname": "column_break1_column",
    "fieldtype": "Column Break"
   },
@@ -107,15 +84,9 @@
    "fieldname": "kanton",
    "fieldtype": "Data",
    "label": "Kanton"
-  },
-  {
-   "fieldname": "payment_type",
-   "fieldtype": "Link",
-   "label": "Payment to",
-   "options": "Tarpoint Bank payment accounts"
   }
  ],
- "modified": "2020-06-26 13:08:35.947848",
+ "modified": "2020-06-29 23:10:45.353308",
  "modified_by": "Administrator",
  "module": "Spinadent",
  "name": "Tarpoint Bank",

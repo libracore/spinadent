@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup   # to remove html tags
 @frappe.whitelist()
 def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
     # load original document
+    bank_details = None
     if dn:
         doc = frappe.get_doc('Delivery Note', dn)
         date = doc.transaction_date
@@ -31,14 +32,17 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
         doc=frappe.get_doc('Sales Invoice', sinv)  
         date = doc.posting_date
         customer = frappe.get_doc("Customer", doc.customer)
-        customer_address = frappe.get_doc("Address", doc.customer_address)  
+        customer_address = frappe.get_doc("Address", doc.customer_address)
+        if not doc.bank:
+            frappe.throw( _("Please define bank details").format(doc.company))
+        bank_details = frappe.get_doc('Tarpoint Bank', doc.bank)
+        if not bank_details.iban:
+            frappe.throw( _("Bank {0} has no IBAN").format(doc.bank))
     elif qtn:
         doc=frappe.get_doc('Quotation', qtn)  
         date = doc.transaction_date    
         customer = frappe.get_doc("Customer", doc.party_name) 
-        frappe.msgprint("hallo")
         customer_address = frappe.get_doc("Address", doc.customer_address) 
-        frappe.msgprint("hallo2") 
     else:
         frappe.throw("Please provide an argument")
 
@@ -47,7 +51,9 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
     biller_address = get_primary_address(target_name=doc.company, target_type="Company")
     if not biller_address:
         frappe.throw( _("Please define an address for Company {0}").format(doc.company))
-
+    if not biller_details.phone_no:
+        frappe.throw( _("Please define a phone number for Company {0}").format(doc.company))
+        
     if not doc.patient:
         frappe.throw( _("Please define an patient for Quotation {0}").format(doc.name))
     debitor_details = frappe.get_doc('Patient', doc.patient)
@@ -75,15 +81,11 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
         salutation = "Frau"
     else:
         salutation = "Herr"
-
-    bank_details = frappe.get_doc('Tarpoint Bank', doc.bank)
 	
     tax_id_toInt = ""  
     if doc.tax_id: 
         t_id = doc.tax_id
         tax_id_toInt = re.sub("[^0-9]", "", t_id)
-  
-    taxless_amount = (doc.net_total) - (doc.total_taxes_and_charges)
 
     creditor_details = frappe.get_doc('Healthcare Practitioner', doc.ref_practitioner)
     creditor_address = get_primary_address(target_name=doc.ref_practitioner, target_type="Healthcare Practitioner")
@@ -109,15 +111,30 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
         remarks = BeautifulSoup(doc.terms, "lxml").text
     else:
         remarks = "Keine Anmerkungen"
+    try:
+        if not doc.beginn_behandlung:
+            doc.beginn_behandlung = datetime.now()
+    except:
+        doc.beginn_behandlung = datetime.now()
+    try:
+        if not doc.ende_behandlung:
+            doc.ende_behandlung = datetime.now()
+    except:
+        doc.ende_behandlung = datetime.now()
     
-    
-    
+    # compute numeric reference name
+    reference = "0000000000"
+    for i in range(0,len(doc.name)):
+        if doc.name[i].isdigit():
+            reference += doc.name[i]
+    reference = reference[-10:]
     
     # create data record
     data = {
         'date': date.strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00",
         'timestamp': int(time.time()),
         'name': doc.name,
+        'reference': reference,
         'file_title': doc.title,
         'payment_period': "Payment is due within {0} days from invoice date.".format(due_period),
         'remark': cgi.escape(remarks),
@@ -207,9 +224,9 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
             'currency' : doc.currency or "",
             'net_total' : doc.net_total or "",
             'tax_id' : tax_id_toInt,
-            'taxless_total' : taxless_amount, 
-            'total_taxes' : doc.total_taxes_and_charges or ""
+            'total_taxes' : doc.total_taxes_and_charges or 0
         },
+        'vat': doc.taxes,
         'creditor': {
             'designation' : cgi.escape(creditor_details.designation or ""),
             'family_name' : cgi.escape(creditor_details.first_name or ""),
@@ -223,31 +240,29 @@ def make_tarpoint_file(qtn=None,so=None, sinv=None, dn=None, validate=True):
             'reason' : cgi.escape(doc.behandlungsgrund or ""),
             'diagnosis' : cgi.escape(doc.diagnose or ""),
             'canton': doc.behandlungskanton or "",
-            'begin_date': doc.beginn_behandlung.strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00",
-            'end_date': doc.ende_behandlung.strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00"
+            'begin_date': doc.beginn_behandlung.strftime("%Y-%m-%dT%H:%M:%S"),
+            'end_date': doc.ende_behandlung.strftime("%Y-%m-%dT%H:%M:%S")
         },
         'accident_details': {
             'accident_date' : (doc.fall_unfalldatum).strftime("%Y-%m-%dT%H:%M:%S") or "2020-01-01T00:00:00",
             'accident_id' : cgi.escape(doc.fall_nr_versicherung_ or "G999999")
-        },
-        'bank': {
-			'post_account': bank_details.konto_nr,
-			'iban': bank_details.iban,
-			'coding_line1': bank_details.coding_line_1,
-			'coding_line2': bank_details.coding_line_2,
-			'bank_name': bank_details.company_name,
-			'department': bank_details.department,
+        }
+    }
+    
+    # add bank details if available
+    if bank_details:
+        data['bank'] = {
+			'iban': (bank_details.iban or "").replace(" ", ""),
+			'bank_name': bank_details.company_name or "",
+			'department': bank_details.department or "",
 			'post_box': bank_details.post_box,
 			'street': bank_details.street,
 			'zip': bank_details.zip_code,
 			'city': bank_details.city,
 			'canton_code': bank_details.kanton,
 			'payment_to': bank_details.payment_type
-			
-			
-        },
-    }
-
+        }
+    
     # render data into template
     if qtn:
         content = frappe.render_template('spinadent/spinadent/doctype/tarpoints_setting/quotation.html', data)

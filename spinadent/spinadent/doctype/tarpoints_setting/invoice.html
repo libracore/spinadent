@@ -5,7 +5,6 @@
             <invoice:via via="{{customer.gln_number}}" sequence_id="1"/> 
         </invoice:transport>
     </invoice:processing>
-    
     <invoice:payload type="invoice" copy="0" storno="0">
         <invoice:invoice request_timestamp="{{timestamp}}" request_date="{{date}}" request_id="{{name}}"/>
             <invoice:body role="{{role}}" place="{{place}}">
@@ -14,20 +13,21 @@
                     <invoice:generator name="libracore business software/ERPNext" copyright="libracore AG" version="12"><invoice:depends_on name="miscValidator ATL Module" copyright="Suva" version="200" id="1002090101"/>
 					</invoice:generator>
                 </invoice:prolog>               
-                <invoice:remark>1. Fertigung: Schweiz 2. Beilagen: Lieferschein(e) inkl. der Konformitätserklärung(en) MepV</invoice:remark> 
+                <invoice:remark>{{ remark }}</invoice:remark> 
 				<invoice:balance currency="{{balance.currency}}" amount="{{balance.net_total}} " amount_obligations="{{balance.net_total}}" amount_due="{{balance.net_total}}"> 
-                    <invoice:vat vat="7.7"> 
-                        <invoice:vat_rate vat="0.00" vat_rate="0" amount="{{balance.taxless_total}}"/> 
-                        <invoice:vat_rate vat="7.7" vat_rate="7.7" amount="{{balance.total_taxes}}"/> 
+                    <invoice:vat vat="{{balance.total_taxes}}">
+                        {% for tax in vat -%}
+                        <invoice:vat_rate vat="{{ tax.tax_amount }}" vat_rate="{{ tax.rate }}" amount="{{balance.net_total}}"/> 
+                        {% endfor -%}
                     </invoice:vat>
                 </invoice:balance> 
-            <invoice:esrRed post_account="{{bank.post_account}}" payment_to="{{bank.payment_to}}" iban="{{bank.iban}}" coding_line1="{{bank.coding_line1}}" coding_line2="{{bank.coding_line2}}">             
+            <invoice:esrRed payment_to="bank_account" iban="{{ bank.iban }}" reference_number="{{ reference }}" post_account="00-0000-0" coding_line1="000000000000000000000000000+ 070000000&gt;" coding_line2="000000000&gt;">             
                 <invoice:bank>
                     <invoice:company>
                         <invoice:companyname>{{bank.bank_name}}</invoice:companyname>
-                        <invoice:department>{{bank.department}}</invoice:department>
+                        {% if bank.department %}<invoice:department>{{bank.department}}</invoice:department>{% endif -%}
                         <invoice:postal>
-                            <invoice:pobox>{{bank.post_box}}</invoice:pobox>
+                            {% if bank.post_box %}<invoice:pobox>{{bank.post_box}}</invoice:pobox>{% endif -%}
                             <invoice:street>{{bank.street}}</invoice:street>
                             <invoice:zip statecode="{{bank.canton_code}}">{{bank.zip}}</invoice:zip>
                             <invoice:city>{{bank.city}}</invoice:city>
@@ -37,10 +37,10 @@
             </invoice:esrRed>	
            <invoice:tiers_payant >
                 <invoice:biller ean_party="{{biller.gln_number}}" zsr="{{biller.zsr_number}}" > 
-                    <invoice:person title="{{biller.designation}}">
+                    <invoice:person>
                         <invoice:familyname>{{biller.family_name}}</invoice:familyname>
                         <invoice:givenname>{{biller.given_name}}</invoice:givenname>
-                        <invoice:subaddressing>{{biller.subaddressing}}</invoice:subaddressing>  
+                        {%- if biller.subaddressing %}<invoice:subaddressing>{{biller.subaddressing}}</invoice:subaddressing>{% endif %}
                         <invoice:postal>
                             <invoice:street>{{biller.street}}</invoice:street> 
                             <invoice:zip statecode="{{biller.statecode}}">{{biller.zip}}</invoice:zip>
@@ -52,13 +52,11 @@
                         </invoice:telecom>
                     </invoice:person>
                 </invoice:biller>
-                
-  
                 <invoice:provider ean_party="{{biller.gln_number}}" zsr="{{biller.zsr_number}}">
-                    <invoice:person title="{{provider.designation}}"> 
+                    <invoice:person> 
                         <invoice:familyname>{{provider.family_name}}</invoice:familyname>
                         <invoice:givenname>{{provider.given_name}}</invoice:givenname>
-                        <invoice:subaddressing>{{provider.subaddressing}}</invoice:subaddressing>
+                        {% if provider.subaddressing %}<invoice:subaddressing>{{provider.subaddressing}}</invoice:subaddressing>{% endif %}
                         <invoice:postal>
                             <invoice:street>{{provider.street}}</invoice:street>
                             <invoice:zip statecode ="{{provider.statecode}}">{{provider.zip}}</invoice:zip>
@@ -112,11 +110,6 @@
 					<invoice:record_other record_id="{{loop.index }}"  code="{{i.item_code}}" name="{{i.item_name}}" session="1" quantity="{{i.qty}}" date_begin="{{date}}" provider_id="{{biller.gln_number}}" responsible_id="{{biller.gln_number}}" unit = "1" unit_factor="1.0" external_factor="1.0" amount="{{i.amount}}" tariff_type="223"/>  
 					{% endfor %}  
 				</invoice:services>
-				<invoice:documents number="1">              
-					<invoice:document filename="{{file_title}}" mimeType="application/pdf" viewer="{{file_title}}">		
-						<invoice:base64></invoice:base64>
-					</invoice:document>
-				</invoice:documents>
 			</invoice:body>
 		</invoice:payload>
 	</invoice:request>
